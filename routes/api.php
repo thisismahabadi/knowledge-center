@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'articles'], function () {
+	Route::post('/{articleId}/rate', 'App\Http\Controllers\ArticleController@rate');
+	Route::post('/', 'App\Http\Controllers\ArticleController@create');
+	Route::get('/', 'App\Http\Controllers\ArticleController@get');
+	Route::get('/{articleId}', 'App\Http\Controllers\ArticleController@show');
 });

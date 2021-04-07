@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ArticleSeeder::class,
             ArticleRatingSeeder::class,
+            ArticleViewSeeder::class,
         ]);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Article;
+use App\Models\ArticleView;
 use Illuminate\Database\Seeder;
 
-class ArticleSeeder extends Seeder
+class ArticleViewSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +14,6 @@ class ArticleSeeder extends Seeder
      */
     public function run()
     {
-        Article::factory(1000)->create();
+        ArticleView::factory(100000)->create();
     }
 }

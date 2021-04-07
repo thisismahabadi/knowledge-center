@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Article extends Model
+class ArticleView extends Model
 {
     use SoftDeletes, HasFactory;
 
@@ -16,7 +16,7 @@ class Article extends Model
      * @var array
      */
     protected $fillable = [
-        'title',
-        'body',
+        'article_id',
+        'ip_address',
     ];
 }

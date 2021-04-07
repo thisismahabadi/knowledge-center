@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Article;
+use App\Models\ArticleView;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ArticleFactory extends Factory
+class ArticleViewFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Article::class;
+    protected $model = ArticleView::class;
 
     /**
      * Define the model's default state.
@@ -22,8 +22,8 @@ class ArticleFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->word,
-            'body' => $this->faker->sentence,
+            'article_id' => $this->faker->numberBetween(1, 1000),
+            'ip_address' => $this->faker->ipv4,
         ];
     }
 }

@@ -23,7 +23,7 @@ class ArticleRatingFactory extends Factory
     public function definition()
     {
         return [
-            'article_id' => Article::factory(),
+            'article_id' => $this->faker->numberBetween(1, 1000),
             'score' => $this->faker->numberBetween(1, 5),
             'ip_address' => $this->faker->ipv4,
         ];
