@@ -59,46 +59,19 @@ class ArticleController extends Controller
      *
      * @param Request $request
      *
+     * @see \App\Models\Article
+     *
      * @return object
      */
     public function get(Request $request): object
     {
-    	$article = new Article;
-
-    	if ($request->categories) {
-			$article = $article->join('article_categories', 'articles.id', '=', 'article_categories.article_id')
-				->whereIn('article_categories.category_id', $request->categories);
-    	}
-
-    	if ($request->date) {
-    		$article = $article->whereBetween('created_at', [$request->date['start'], $request->date['end']]);
-    	}
-
-    	if ($request->sort) {
-    		switch ($request->sort) {
-    			case 'view':
-    				$article = $article->join('article_views', 'articles.id', '=', 'article_views.article_id')
-    					->groupBy('articles.id')
-						->whereDate('articles.created_at', '>=', $request->view_date)
-						->select([\DB::raw('COUNT(articles.id) as total_views'), 'articles.*'])
-						->orderBy('total_views', 'desc');
-    				break;
-
-    			default:
-    				break;
-    		}
-    	}
-
-    	if ($request->limit) {
-    		$article = $article->limit($request->limit);
-    	}
-
-    	if ($request->search) {
-    		$article = $article->where('title', 'LIKE', '%' . $request->search . '%')
-    			->orWhere('body', 'LIKE', '%' . $request->search . '%');
-    	}
-
-		return $article->get();
+        return (new Article)->init()
+            ->filterByCategories($request->categories)
+            ->filterByCreationDate($request->date)
+            ->sortByViews($request->sort, $request->view_date)
+            ->limit($request->limit)
+            ->searchByTitleOrBody($request->search)
+            ->fetch();
     }
 
     /**
