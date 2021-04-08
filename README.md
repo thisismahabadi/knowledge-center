@@ -2,7 +2,7 @@
 You can use the ``knowledge-center.postman_collection.json`` file located in the root folder of project to see the documentation. As it seems you can also import the file in your ``Postman``.
 
 # Installation
-To start using the app you should migrate and seed data.
+To start using the app at first put your database setting in ``.env`` file and then you should migrate and seed data.
 
 Migrate and seed at same time:
 
@@ -13,6 +13,10 @@ Migrate and seed separately:
 ``php artisan migrate``
 
 ``php artisan db:seed``
+
+Allright, now you can serve the project:
+
+``php artisan serve``
 
 # Notes
 
