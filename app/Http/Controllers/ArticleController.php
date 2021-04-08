@@ -17,7 +17,7 @@ class ArticleController extends Controller
      * Rate an article.
      *
      * @param int $articleId
-     * @param Request $request
+     * @param \App\Http\Requests\RateRequest $request
      *
      * @see \App\Models\ArticleRating::isEligible($ipAddress)
      * @see \App\Models\ArticleRating::hasRated(int $articleId, $ipAddress)
@@ -39,7 +39,7 @@ class ArticleController extends Controller
     /**
      * Create a new article.
      *
-     * @param Request $request
+     * @param \App\Http\Requests\CreateArticleRequest $request
      *
      * @see \App\Models\ArticleCategory::assignCategory(array $categories, int $articleId)
      *
@@ -60,7 +60,7 @@ class ArticleController extends Controller
     /**
      * Get the list of articles.
      *
-     * @param Request $request
+     * @param \App\Http\Requests\ArticlesListRequest $request
      *
      * @see \App\Models\Article
      *

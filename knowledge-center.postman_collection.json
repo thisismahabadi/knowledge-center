@@ -1,0 +1,191 @@
+{
+	"variables": [],
+	"info": {
+		"name": "knowledge-center",
+		"_postman_id": "78ba2da5-03b2-7a62-5b4c-4af8f0d3e732",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List the articles",
+			"request": {
+				"url": {
+					"raw": "http://localhost:8000/api/articles?categories[]=1&date[start]=2020-01-01&date[end]=2021-12-21&search=A&view_date=2020-01-01&limit=5&sort=view",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"articles"
+					],
+					"query": [
+						{
+							"key": "categories[]",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "date[start]",
+							"value": "2020-01-01",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "date[end]",
+							"value": "2021-12-21",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "search",
+							"value": "A",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "view_date",
+							"value": "2020-01-01",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "limit",
+							"value": "5",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "sort",
+							"value": "view",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "score",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "Articles can be searched, filtered and ordered."
+			},
+			"response": []
+		},
+		{
+			"name": "Rate an article",
+			"request": {
+				"url": "http://localhost:8000/api/articles/1/rate",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "score",
+							"value": "0",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "score",
+							"value": "5",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"description": "API resource endpoint to rate an article:\na. article_id\nb. score (1,2,3,4,5)\nc. ip_address"
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new article",
+			"request": {
+				"url": "http://localhost:8000/api/articles",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Hello there",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "body",
+							"value": "This is a test body which is created by Mohammad Mahabadi. Hope you like it.",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "Error will occured",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "categories[]",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": "The create action (POST) must support the input:\ni. title\nii. body\niii. categories[]"
+			},
+			"response": []
+		},
+		{
+			"name": "Show an article",
+			"request": {
+				"url": "http://localhost:8000/api/articles/1",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "A show (GET with article id) will register a view (by IP address)"
+			},
+			"response": []
+		}
+	]
+}
