@@ -7,6 +7,9 @@ use App\Models\ArticleView;
 use Illuminate\Http\Request;
 use App\Models\ArticleRating;
 use App\Models\ArticleCategory;
+use App\Http\Requests\RateRequest;
+use App\Http\Requests\ArticlesListRequest;
+use App\Http\Requests\CreateArticleRequest;
 
 class ArticleController extends Controller
 {
@@ -21,7 +24,7 @@ class ArticleController extends Controller
      *
      * @return object
      */
-    public function rate(int $articleId, Request $request): object
+    public function rate(int $articleId, RateRequest $request): object
     {
         (new ArticleRating)->isEligible(\Request::ip());
     	(new ArticleRating)->hasRated($articleId, \Request::ip());
@@ -42,7 +45,7 @@ class ArticleController extends Controller
      *
      * @return object
      */
-    public function create(Request $request): object
+    public function create(CreateArticleRequest $request): object
     {
     	$article = Article::create([
 	        'title' => $request->title,
@@ -63,7 +66,7 @@ class ArticleController extends Controller
      *
      * @return object
      */
-    public function get(Request $request): object
+    public function get(ArticlesListRequest $request): object
     {
         return (new Article)->init()
             ->filterByCategories($request->categories)
