@@ -17,14 +17,13 @@ class ShowArticleTest extends TestCase
     {
         $response = $this->get('/api/articles/1');
 
-        $response->assertStatus(200);
-
-        $response->assertSee('id');
-        $response->assertSee('title');
-        $response->assertSee('body');
-        $response->assertSee('created_at');
-        $response->assertSee('updated_at');
-        $response->assertSee('deleted_at');
+        $response->assertStatus(200)
+            ->assertSee('id')
+            ->assertSee('title')
+            ->assertSee('body')
+            ->assertSee('created_at')
+            ->assertSee('updated_at')
+            ->assertSee('deleted_at');
     }
 
     /**
