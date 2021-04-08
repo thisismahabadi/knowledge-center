@@ -6,7 +6,7 @@ use App\Models\Article;
 use App\Models\ArticleView;
 use Illuminate\Http\Request;
 use App\Models\ArticleRating;
-use App\Models\ArticleCategories;
+use App\Models\ArticleCategory;
 
 class ArticleController extends Controller
 {
@@ -16,37 +16,29 @@ class ArticleController extends Controller
      * @param int $articleId
      * @param Request $request
      *
-     * @throws \Exception
+     * @see \App\Models\ArticleRating::isEligible($ipAddress)
+     * @see \App\Models\ArticleRating::hasRated(int $articleId, $ipAddress)
      *
      * @return object
      */
-    public function rate(int $articleId, Request $request)//: object
+    public function rate(int $articleId, Request $request): object
     {
-    	$rate = ArticleRating::where('ip_address', $request->ip());
-    	$todayRates = $rate->whereDate('created_at', now())
-    		->count();
+        (new ArticleRating)->isEligible(\Request::ip());
+    	(new ArticleRating)->hasRated($articleId, \Request::ip());
 
-    	if ($todayRates >= 10) {
-			throw new \Exception('You just can rate the articles 10 times a day.');
-    	}
-
-    	$rate = $rate->where('article_id', $articleId);
-
-		if (! $rate->count()) {
-	    	return ArticleRating::create([
-		        'article_id' => $articleId,
-		        'score' => $request->score,
-		        'ip_address' => $request->ip(),
-	    	]);
-		}
-
-		throw new \Exception('You just can rate to an article once.');
+    	return ArticleRating::create([
+	        'article_id' => $articleId,
+	        'score' => $request->score,
+	        'ip_address' => \Request::ip(),
+    	]);
     }
 
     /**
      * Create a new article.
      *
      * @param Request $request
+     *
+     * @see \App\Models\ArticleCategory::assignCategory(array $categories, int $articleId)
      *
      * @return object
      */
@@ -57,14 +49,7 @@ class ArticleController extends Controller
 	        'body' => $request->body,
     	]);
 
-    	if ($request->categories) {
-	    	foreach ($request->categories as $category) {
-	    		ArticleCategories::create([
-			        'article_id' => $article->id,
-			        'category_id' => $category,
-	    		]);
-	    	}
-    	}
+        (new ArticleCategory)->assignCategory($request->categories ?? [], $article->id);
 
     	return $article;
     }
@@ -121,21 +106,22 @@ class ArticleController extends Controller
      *
      * @param int $articleId
      *
+     * @see \App\Models\ArticleView::logView(int $articleId, $ipAddress)
+     *
+     * @throws \Exception
+     *
      * @return object
      */
     public function show(int $articleId): object
     {
-    	$view = ArticleView::where('article_id', $articleId)
-    		->where('ip_address', \Request::ip())
-    		->count();
+		$article = Article::find($articleId);
 
-		if (! $view) {
-	    	ArticleView::create([
-		        'article_id' => $articleId,
-		        'ip_address' => \Request::ip(),
-	    	]);
-		}
+        if (! $article) {
+            throw new \Exception('Article has not found.');
+        }
 
-		return Article::find($articleId);
+        (new ArticleView)->logView($articleId, \Request::ip());
+
+        return $article;
     }
 }
