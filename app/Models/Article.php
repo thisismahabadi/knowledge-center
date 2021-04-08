@@ -119,6 +119,34 @@ class Article extends Model
     }
 
     /**
+     * Sort articles based on their ratings and popularity.
+     *
+     * @param string|null $sort
+     *
+     * @return object
+     */
+    public function sortByPopularity(?string $sort): object
+    {
+        if ($sort) {
+            switch ($sort) {
+                case 'popularity':
+                    $this->article = $this->article
+                        ->join('article_ratings', 'articles.id', '=', 'article_ratings.article_id')
+                        ->groupBy('article_ratings.article_id')
+                        ->select([\DB::raw('SUM(article_ratings.score) / COUNT(article_ratings.id) as total_rates, COUNT(article_ratings.ip_address) as attendance_numbers'), 'articles.*'])
+                        ->orderBy('total_rates', 'desc')
+                        ->orderBy('attendance_numbers', 'desc');
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Limit articles and show records with specified size.
      *
      * @param int|null $limitSize
