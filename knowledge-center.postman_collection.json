@@ -108,7 +108,7 @@
 						{
 							"key": "score",
 							"value": "0",
-							"description": "",
+							"description": "Error will occur, Score should be 1 to 5, Also an user can rate to an article once and maximum 10 articles a day",
 							"type": "text"
 						},
 						{
@@ -153,7 +153,7 @@
 						},
 						{
 							"key": "categories",
-							"value": "Error will occured",
+							"value": "Error will occur",
 							"description": "",
 							"type": "text",
 							"disabled": true
