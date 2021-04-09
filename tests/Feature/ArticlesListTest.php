@@ -61,7 +61,7 @@ class ArticlesListTest extends TestCase
     public function testArticlesListFilterByFalseStructureCategories(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->get('/api/articles?categories=1');
+            ->get("/api/articles?categories=hello");
 
         $response->assertStatus(422);
     }

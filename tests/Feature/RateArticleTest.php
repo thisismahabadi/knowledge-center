@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Article;
-use App\Models\ArticleRating;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -57,7 +56,6 @@ class RateArticleTest extends TestCase
         $response->assertStatus(500);
 
         Article::find($article->id)->forceDelete();
-        ArticleRating::where('article_id', 1)->forceDelete();
     }
 
     /**
@@ -146,6 +144,5 @@ class RateArticleTest extends TestCase
         $response->assertStatus(500);
 
         Article::whereIn('id', $articles)->forceDelete();
-        ArticleRating::whereIn('article_id', $articles)->forceDelete();
     }
 }

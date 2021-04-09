@@ -19,4 +19,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
 	DatabaseSeedJob::dispatch();
     return (new Controller)->setResponse(Controller::SUCCESS, 'Welcome to home page of knowledge center.', Response::HTTP_OK);
-})->middleware(['throttle:100']);
+})->middleware(['throttle:10000000']);

@@ -55,7 +55,7 @@ Below data will seed, keep in mind if you wanted to seed these amount of data it
 | Ratings      | 10,000     |
 | Views      | 100,000     |
 
-There are ``rate limitings`` available on the routes and an user just can send requests 100 times per minute.
+There are ``rate limitings`` available on the routes and an user just can send requests 10,000,000 times per minute (as you know better, it can be any number).
 
 ``Laravel Form Request Validation`` method used to validate the data which user sends.
 
