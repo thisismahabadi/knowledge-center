@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,10 +33,14 @@ class ArticleCategory extends Model
     {
         if ($categories) {
             foreach ($categories as $category) {
-                self::create([
-                    'article_id' => $articleId,
-                    'category_id' => $category,
-                ]);
+                if (Category::find($category)) {
+                    self::create([
+                        'article_id' => $articleId,
+                        'category_id' => $category,
+                    ]);
+                }
+
+                throw new \Exception('Category is not exists.');
             }
         }
     }
