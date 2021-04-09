@@ -32,7 +32,7 @@ class ArticlesListTest extends TestCase
             ->assertSee('updated_at')
             ->assertSee('deleted_at');
 
-        Article::find($article->id)->forceDelete();
+        Article::where('id', $article->id)->forceDelete();
     }
 
     /**
@@ -50,7 +50,7 @@ class ArticlesListTest extends TestCase
 
         $response->assertStatus(200);
 
-        Category::find($category->id)->forceDelete();
+        Category::where('id', $category->id)->forceDelete();
     }
 
     /**
