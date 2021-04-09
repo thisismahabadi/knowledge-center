@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return (new Controller)->setResponse(Controller::SUCCESS, 'Welcome to home page of knowledge center.', Response::HTTP_OK);
+})->middleware(['throttle:100']);
