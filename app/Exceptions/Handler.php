@@ -47,10 +47,10 @@ class Handler extends ExceptionHandler
      * @param \Illuminate\Http\Request $request
      * @param Throwable $e
      *
-     * @return \Illuminate\Http\Response
+     * @return object
      */
     public function render($request, Throwable $e): object
     {
-        return (new Controller)->setResponse(Controller::ERROR, "An error occurred.", $e->getStatusCode());
+        return (new Controller)->setResponse(Controller::ERROR, "An error occurred.", method_exists($e, 'getStatusCode') ? $e->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

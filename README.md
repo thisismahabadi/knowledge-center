@@ -4,7 +4,7 @@ You can use the ``knowledge-center.postman_collection.json`` file located in the
 
 # Installation
 
-To start using the app at first put your database setting in ``.env`` file.
+To start using the app at first put your database setting in ``.env`` file after copying ``.env.example`` to ``.env``.
 
 After that try to install dependencies using:
 
@@ -22,6 +22,16 @@ And to migrate and seed separately:
 
 ``php artisan db:seed``
 
+Note that it will takes a long time if you want to seed by console, you can just run the project home page, and it will seed database by dispatching a job in ``Redis Queue`` in background.
+
+Before run the home page remember to change ``QUEUE_CONNECTION`` to redis in .env file.
+
+``{{url}}/``
+
+Remember to run your queue by:
+
+``php artisan queue:listen --timeout=0``
+
 Allright, now you can serve the project:
 
 ``php artisan serve``
@@ -31,6 +41,8 @@ Allright, now you can serve the project:
 Feature tests of the available routes are provided, therefore you can test the project like this:
 
 ``vendor/bin/phpunit``
+
+Also there's a unit test available for the weighted ranking unit.
 
 # Notes
 
