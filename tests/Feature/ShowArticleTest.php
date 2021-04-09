@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Article;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,9 +14,14 @@ class ShowArticleTest extends TestCase
      *
      * @return void
      */
-    public function testAvailableArticle()
+    public function testAvailableArticle(): void
     {
-        $response = $this->get('/api/articles/1');
+        $article = Article::create([
+            'title' => 'Test title',
+            'body' => 'Test body',
+        ]);
+
+        $response = $this->get("/api/articles/$article->id");
 
         $response->assertStatus(200)
             ->assertSee('id')
@@ -24,6 +30,8 @@ class ShowArticleTest extends TestCase
             ->assertSee('created_at')
             ->assertSee('updated_at')
             ->assertSee('deleted_at');
+
+        Article::find($article->id)->forceDelete();
     }
 
     /**
@@ -31,7 +39,7 @@ class ShowArticleTest extends TestCase
      *
      * @return void
      */
-    public function testUnavailableArticle()
+    public function testUnavailableArticle(): void
     {
         $response = $this->get('/api/articles/11111111111');
 

@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\ArticleView;
 use Illuminate\Http\Request;
 use App\Models\ArticleRating;
+use Illuminate\Http\Response;
 use App\Models\ArticleCategory;
 use App\Http\Requests\RateRequest;
 use App\Http\Requests\ArticlesListRequest;
@@ -26,14 +27,26 @@ class ArticleController extends Controller
      */
     public function rate(int $articleId, RateRequest $request): object
     {
-        (new ArticleRating)->isEligible(\Request::ip());
-    	(new ArticleRating)->hasRated($articleId, \Request::ip());
+        try {
+            $article = Article::find($articleId);
 
-    	return ArticleRating::create([
-	        'article_id' => $articleId,
-	        'score' => $request->score,
-	        'ip_address' => \Request::ip(),
-    	]);
+            if (! $article) {
+                throw new \Exception('Article has not found.');
+            }
+
+            (new ArticleRating)->isEligible(\Request::ip());
+            (new ArticleRating)->hasRated($articleId, \Request::ip());
+
+        	$rate = ArticleRating::create([
+    	        'article_id' => $articleId,
+    	        'score' => $request->score,
+    	        'ip_address' => \Request::ip(),
+        	]);
+
+            return $this->setResponse(self::SUCCESS, $rate, Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return $this->setResponse(self::ERROR, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -47,14 +60,18 @@ class ArticleController extends Controller
      */
     public function create(CreateArticleRequest $request): object
     {
-    	$article = Article::create([
-	        'title' => $request->title,
-	        'body' => $request->body,
-    	]);
+        try {
+        	$article = Article::create([
+    	        'title' => $request->title,
+    	        'body' => $request->body,
+        	]);
 
-        (new ArticleCategory)->assignCategory($request->categories ?? [], $article->id);
+            (new ArticleCategory)->assignCategory($request->categories, $article->id);
 
-    	return $article;
+            return $this->setResponse(self::SUCCESS, $article, Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return $this->setResponse(self::ERROR, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -68,14 +85,20 @@ class ArticleController extends Controller
      */
     public function get(ArticlesListRequest $request): object
     {
-        return (new Article)->init()
-            ->filterByCategories($request->categories)
-            ->filterByCreationDate($request->date)
-            ->sortByViews($request->sort, $request->view_date)
-            ->sortByPopularity($request->sort)
-            ->limit($request->limit)
-            ->searchByTitleOrBody($request->search)
-            ->fetch();
+        try {
+            $articles = (new Article)->init()
+                ->filterByCategories($request->categories)
+                ->filterByCreationDate($request->date)
+                ->sortByViews($request->sort, $request->view_date)
+                ->sortByPopularity($request->sort)
+                ->limit($request->limit)
+                ->searchByTitleOrBody($request->search)
+                ->fetch();
+
+            return $this->setResponse(self::SUCCESS, $articles, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->setResponse(self::ERROR, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -91,14 +114,18 @@ class ArticleController extends Controller
      */
     public function show(int $articleId): object
     {
-		$article = Article::find($articleId);
+        try {
+    		$article = Article::find($articleId);
 
-        if (! $article) {
-            throw new \Exception('Article has not found.');
+            if (! $article) {
+                throw new \Exception('Article has not found.');
+            }
+
+            (new ArticleView)->logView($articleId, \Request::ip());
+
+            return $this->setResponse(self::SUCCESS, $article, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->setResponse(self::ERROR, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        (new ArticleView)->logView($articleId, \Request::ip());
-
-        return $article;
     }
 }

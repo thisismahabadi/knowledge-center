@@ -23,12 +23,12 @@ class ArticleCategory extends Model
     /**
      * Assign categories to an article.
      *
-     * @param array $categories
+     * @param array|null $categories
      * @param int $articleId
      *
      * @return void
      */
-    public function assignCategory(array $categories, int $articleId): void
+    public function assignCategory(?array $categories, int $articleId): void
     {
         if ($categories) {
             foreach ($categories as $category) {

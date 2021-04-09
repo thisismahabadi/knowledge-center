@@ -186,7 +186,7 @@ class Article extends Model
      *
      * @return object
      */
-    public function fetch()
+    public function fetch(): object
     {
         return $this->article
             ->get();

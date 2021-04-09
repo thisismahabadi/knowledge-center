@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Article;
+use App\Models\ArticleRating;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,20 +15,22 @@ class RateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testCreateNewArticleAndRateArticle()
+    public function testCreateNewArticleAndRateArticle(): void
     {
         $article = $this->postJson('/api/articles', [
                 'title' => 'Test title',
                 'body' => 'Test body detail',
             ]);
 
-        $articleId = json_decode($article->getContent())->id;
+        $articleId = json_decode($article->getContent())->data->id;
 
         $response = $this->postJson("/api/articles/$articleId/rate", [
                 'score' => 5,
             ]);
 
         $response->assertStatus(201);
+
+        Article::find($articleId)->forceDelete();
     }
 
     /**
@@ -34,18 +38,26 @@ class RateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testRateArticleMultipleTimes()
+    public function testRateArticleMultipleTimes(): void
     {
-        $this->postJson('/api/articles/1/rate', [
+        $article = Article::create([
+            'title' => 'Test title',
+            'body' => 'Test body',
+        ]);
+
+        $this->postJson("/api/articles/$article->id/rate", [
             'score' => 5,
         ]);
 
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson('/api/articles/1/rate', [
+            ->postJson("/api/articles/$article->id/rate", [
                 'score' => 5,
             ]);
 
         $response->assertStatus(500);
+
+        Article::find($article->id)->forceDelete();
+        ArticleRating::where('article_id', 1)->forceDelete();
     }
 
     /**
@@ -53,12 +65,19 @@ class RateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testRateArticleWithoutRequiredFields()
+    public function testRateArticleWithoutRequiredFields(): void
     {
+        $article = Article::create([
+            'title' => 'Test title',
+            'body' => 'Test body',
+        ]);
+
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->post('/api/articles/1/rate');
+            ->post("/api/articles/$article->id/rate");
 
         $response->assertStatus(422);
+
+        Article::find($article->id)->forceDelete();
     }
 
     /**
@@ -66,14 +85,36 @@ class RateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testRateArticleWithFalseScore()
+    public function testRateArticleWithFalseScore(): void
     {
+        $article = Article::create([
+            'title' => 'Test title',
+            'body' => 'Test body',
+        ]);
+
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson('/api/articles/1/rate', [
+            ->postJson("/api/articles/$article->id/rate", [
                 'score' => 3.5,
             ]);
 
         $response->assertStatus(422);
+
+        Article::find($article->id)->forceDelete();
+    }
+
+    /**
+     * Test rate a unkown article.
+     *
+     * @return void
+     */
+    public function testRateUnknownArticle(): void
+    {
+        $response = $this->withHeaders(['Accept' => 'application/json'])
+            ->postJson('/api/articles/111111111/rate', [
+                'score' => 1,
+            ]);
+
+        $response->assertStatus(500);
     }
 
     /**
@@ -81,18 +122,30 @@ class RateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testRateArticlesIsNotPossibleTenTimesADay()
+    public function testRateArticlesIsNotPossibleTenTimesADay(): void
     {
-        for ($i=50; $i < 60; $i++) { 
-            $this->postJson("/api/articles/$i/rate", [
+        $articles = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $article = Article::create([
+                'title' => 'Test title',
+                'body' => 'Test body',
+            ]);
+
+            $articles[] = $article->id;
+
+            $this->postJson("/api/articles/$article->id/rate", [
                 'score' => 3,
             ]);
         }
 
-        $response = $this->postJson('/api/articles/100/rate', [
-                'score' => 2,
-            ]);
+        $response = $this->postJson("/api/articles/$articles[0]/rate", [
+            'score' => 2,
+        ]);
 
         $response->assertStatus(500);
+
+        Article::whereIn('id', $articles)->forceDelete();
+        ArticleRating::whereIn('article_id', $articles)->forceDelete();
     }
 }

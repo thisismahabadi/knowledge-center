@@ -16,7 +16,7 @@ class CreateArticleViewsTable extends Migration
         Schema::create('article_views', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('article_id')->unsigned()->index();
-            $table->foreign('article_id')->references('id')->on('articles');
+            $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
             $table->ipAddress('ip_address');
             $table->timestamps();
             $table->softDeletes();

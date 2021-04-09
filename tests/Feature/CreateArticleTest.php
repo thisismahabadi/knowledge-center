@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Article;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,14 +14,18 @@ class CreateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testCreateArticle()
+    public function testCreateArticle(): void
     {
         $response = $this->postJson('/api/articles', [
                 'title' => 'Test title',
                 'body' => 'Test body detail',
             ]);
 
+        $articleId = json_decode($response->getContent())->data->id;
+
         $response->assertStatus(201);
+
+        Article::find($articleId)->forceDelete();
     }
 
     /**
@@ -28,7 +33,7 @@ class CreateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testCreateArticleWithoutRequiredFields()
+    public function testCreateArticleWithoutRequiredFields(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->post('/api/articles');
@@ -41,7 +46,7 @@ class CreateArticleTest extends TestCase
      *
      * @return void
      */
-    public function testCreateArticleWithFalseValidations()
+    public function testCreateArticleWithFalseValidations(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->postJson('/api/articles', [

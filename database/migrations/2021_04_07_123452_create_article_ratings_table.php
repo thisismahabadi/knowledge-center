@@ -16,7 +16,7 @@ class CreateArticleRatingsTable extends Migration
         Schema::create('article_ratings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('article_id')->unsigned()->index();
-            $table->foreign('article_id')->references('id')->on('articles');
+            $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
             $table->integer('score');
             $table->ipAddress('ip_address');
             $table->timestamps();

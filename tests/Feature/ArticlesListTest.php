@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,8 +15,13 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesList()
+    public function testArticlesList(): void
     {
+        $article = Article::create([
+            'title' => 'Test title',
+            'body' => 'Test body',
+        ]);
+
         $response = $this->get('/api/articles');
 
         $response->assertStatus(200)
@@ -24,6 +31,8 @@ class ArticlesListTest extends TestCase
             ->assertSee('created_at')
             ->assertSee('updated_at')
             ->assertSee('deleted_at');
+
+        Article::find($article->id)->forceDelete();
     }
 
     /**
@@ -31,11 +40,17 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListFilterByRightStructureCategories()
+    public function testArticlesListFilterByRightStructureCategories(): void
     {
-        $response = $this->get('/api/articles?categories[]=1');
+        $category = Category::create([
+            'title' => 'Anything',
+        ]);
+
+        $response = $this->get("/api/articles?categories[]=$category->id");
 
         $response->assertStatus(200);
+
+        Category::find($category->id)->forceDelete();
     }
 
     /**
@@ -43,7 +58,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListFilterByFalseStructureCategories()
+    public function testArticlesListFilterByFalseStructureCategories(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?categories=1');
@@ -56,7 +71,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListFilterByRightStructureCreationDate()
+    public function testArticlesListFilterByRightStructureCreationDate(): void
     {
         $response = $this->get('/api/articles?date[start]=2020-01-01');
 
@@ -68,7 +83,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListFilterByFalseStructureCreationDate()
+    public function testArticlesListFilterByFalseStructureCreationDate(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?date=2020');
@@ -81,7 +96,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListSortByRightStructureView()
+    public function testArticlesListSortByRightStructureView(): void
     {
         $response = $this->get('/api/articles?sort=view');
 
@@ -93,10 +108,35 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListSortByFalseStructureView()
+    public function testArticlesListSortByFalseStructureView(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?sort[]=view');
+
+        $response->assertStatus(422);
+    }
+
+    /**
+     * Test that articles list sort by popularity are correct.
+     *
+     * @return void
+     */
+    public function testArticlesListPopularityByRightStructureView(): void
+    {
+        $response = $this->get('/api/articles?sort=popularity');
+
+        $response->assertStatus(200);
+    }
+
+    /**
+     * Test that articles list sort by popularity are not correct if popularity send without string structure.
+     *
+     * @return void
+     */
+    public function testArticlesListPopularityByFalseStructureView(): void
+    {
+        $response = $this->withHeaders(['Accept' => 'application/json'])
+            ->get('/api/articles?sort[]=popularity');
 
         $response->assertStatus(422);
     }
@@ -106,7 +146,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListLimitByRightStructure()
+    public function testArticlesListLimitByRightStructure(): void
     {
         $response = $this->get('/api/articles?limit=10');
 
@@ -118,7 +158,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListLimitByFalseStructure()
+    public function testArticlesListLimitByFalseStructure(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?limit=error');
@@ -131,7 +171,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListSearchByRightStructure()
+    public function testArticlesListSearchByRightStructure(): void
     {
         $response = $this->get('/api/articles?search=A');
 
@@ -143,7 +183,7 @@ class ArticlesListTest extends TestCase
      *
      * @return void
      */
-    public function testArticlesListSearchByFalseStructure()
+    public function testArticlesListSearchByFalseStructure(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?search[]=1');
