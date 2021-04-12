@@ -18,10 +18,7 @@ class ShowArticleTest extends TestCase
      */
     public function testAvailableArticle(): void
     {
-        $article = Article::create([
-            'title' => 'Test title',
-            'body' => 'Test body',
-        ]);
+        $article = Article::factory()->create();
 
         $response = $this->get("/api/articles/$article->id");
 

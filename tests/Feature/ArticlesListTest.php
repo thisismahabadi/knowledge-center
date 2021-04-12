@@ -19,10 +19,7 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesList(): void
     {
-        $article = Article::create([
-            'title' => 'Test title',
-            'body' => 'Test body',
-        ]);
+        Article::factory()->create();
 
         $response = $this->get('/api/articles');
 
@@ -42,9 +39,7 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListFilterByRightStructureCategories(): void
     {
-        $category = Category::create([
-            'title' => 'Anything',
-        ]);
+        $category = Category::factory()->create();
 
         $response = $this->get("/api/articles?categories[]=$category->id");
 

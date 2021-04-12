@@ -12,6 +12,27 @@ class RateArticleTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Article object id.
+     *
+     * @var int
+     */
+    public $article;
+
+    /**
+     * Test initial setup.
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $article = Article::factory()->create();
+
+        $this->article = $article->id;
+    }
+
+    /**
      * Test create new article and rate that article.
      *
      * @return void
@@ -39,17 +60,12 @@ class RateArticleTest extends TestCase
      */
     public function testRateArticleMultipleTimes(): void
     {
-        $article = Article::create([
-            'title' => 'Test title',
-            'body' => 'Test body',
-        ]);
-
-        $this->postJson("/api/articles/$article->id/rate", [
+        $this->postJson("/api/articles/$this->article->id/rate", [
             'score' => 5,
         ]);
 
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson("/api/articles/$article->id/rate", [
+            ->postJson("/api/articles/$this->article->id/rate", [
                 'score' => 5,
             ]);
 
@@ -63,13 +79,8 @@ class RateArticleTest extends TestCase
      */
     public function testRateArticleWithoutRequiredFields(): void
     {
-        $article = Article::create([
-            'title' => 'Test title',
-            'body' => 'Test body',
-        ]);
-
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->post("/api/articles/$article->id/rate");
+            ->post("/api/articles/$this->article->id/rate");
 
         $response->assertStatus(422);
     }
@@ -81,13 +92,8 @@ class RateArticleTest extends TestCase
      */
     public function testRateArticleWithFalseScore(): void
     {
-        $article = Article::create([
-            'title' => 'Test title',
-            'body' => 'Test body',
-        ]);
-
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson("/api/articles/$article->id/rate", [
+            ->postJson("/api/articles/$this->article->id/rate", [
                 'score' => 3.5,
             ]);
 
@@ -119,10 +125,7 @@ class RateArticleTest extends TestCase
         $articles = [];
 
         for ($i = 0; $i < 10; $i++) {
-            $article = Article::create([
-                'title' => 'Test title',
-                'body' => 'Test body',
-            ]);
+            $article = Article::factory()->create();
 
             $articles[] = $article->id;
 
