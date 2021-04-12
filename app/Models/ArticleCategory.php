@@ -33,14 +33,14 @@ class ArticleCategory extends Model
     {
         if ($categories) {
             foreach ($categories as $category) {
-                if (Category::find($category)) {
-                    self::create([
-                        'article_id' => $articleId,
-                        'category_id' => $category,
-                    ]);
+                if (! Category::find($category)) {
+                    throw new \Exception('Category is not exists.');
                 }
 
-                throw new \Exception('Category is not exists.');
+                self::create([
+                    'article_id' => $articleId,
+                    'category_id' => $category,
+                ]);
             }
         }
     }
