@@ -5,9 +5,12 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Article;
 use App\Models\ArticleRating;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ArticlePopularitySortTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Create two articles and rate with 5 score number the
      * first article four times more than the second one
@@ -52,7 +55,5 @@ class ArticlePopularitySortTest extends TestCase
     	}
 
         $this->assertGreaterThan($numbers[0], $numbers[1]);
-
-        Article::whereIn('id', $numbers)->forceDelete();
     }
 }

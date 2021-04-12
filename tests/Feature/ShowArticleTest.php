@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ShowArticleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test if an article is available.
      *
@@ -30,8 +32,6 @@ class ShowArticleTest extends TestCase
             ->assertSee('created_at')
             ->assertSee('updated_at')
             ->assertSee('deleted_at');
-
-        Article::find($article->id)->forceDelete();
     }
 
     /**

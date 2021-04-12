@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateArticleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test create an article.
      *
@@ -21,11 +23,7 @@ class CreateArticleTest extends TestCase
                 'body' => 'Test body detail',
             ]);
 
-        $articleId = json_decode($response->getContent())->data->id;
-
         $response->assertStatus(201);
-
-        Article::find($articleId)->forceDelete();
     }
 
     /**
