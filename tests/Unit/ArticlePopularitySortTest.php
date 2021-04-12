@@ -21,28 +21,19 @@ class ArticlePopularitySortTest extends TestCase
      */
     public function testWeightedRanking()
     {
-    	$firstArticle = Article::create([
-    		'title' => 'First title',
-    		'body' => 'First body',
-		]);
+        $firstArticle = Article::factory()->create();
+        $secondArticle = Article::factory()->create();
 
-    	$secondArticle = Article::create([
-    		'title' => 'Second title',
-    		'body' => 'Second body',
-		]);
-
-		ArticleRating::create([
-	        'article_id' => $secondArticle->id,
-	        'score' => 5,
-	        'ip_address' => long2ip(mt_rand()),
-    	]);
+        ArticleRating::factory()->create([
+            'article_id' => $secondArticle->id,
+            'score' => 5,
+        ]);
 
 		for ($i = 0; $i < 4; $i++) { 
-			ArticleRating::create([
-		        'article_id' => $firstArticle->id,
-		        'score' => 5,
-		        'ip_address' => long2ip(mt_rand()),
-	    	]);
+            ArticleRating::factory()->create([
+                'article_id' => $firstArticle->id,
+                'score' => 5,
+            ]);
 		}
 
     	$articles = (new Article)->init()
