@@ -16,6 +16,10 @@ After that try to install dependencies using:
 
 ``composer install``
 
+The next thing you should do is set your application key to a random string by:
+
+``php artisan key:generate``
+
 And then you should migrate and seed data.
 
 To migrate and seed at same time:
