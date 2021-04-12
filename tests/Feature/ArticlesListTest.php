@@ -10,6 +10,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ArticlesListTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test that articles list are correct.
      *

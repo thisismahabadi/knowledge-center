@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateArticleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test create an article.
      *
