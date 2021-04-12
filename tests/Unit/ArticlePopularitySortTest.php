@@ -55,7 +55,5 @@ class ArticlePopularitySortTest extends TestCase
     	}
 
         $this->assertGreaterThan($numbers[0], $numbers[1]);
-
-        Article::whereIn('id', $numbers)->forceDelete();
     }
 }

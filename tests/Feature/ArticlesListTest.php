@@ -33,8 +33,6 @@ class ArticlesListTest extends TestCase
             ->assertSee('created_at')
             ->assertSee('updated_at')
             ->assertSee('deleted_at');
-
-        Article::where('id', $article->id)->forceDelete();
     }
 
     /**
@@ -51,8 +49,6 @@ class ArticlesListTest extends TestCase
         $response = $this->get("/api/articles?categories[]=$category->id");
 
         $response->assertStatus(200);
-
-        Category::where('id', $category->id)->forceDelete();
     }
 
     /**

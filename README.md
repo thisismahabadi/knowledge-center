@@ -48,7 +48,11 @@ Allright, now you can serve the project:
 
 # Testing
 
-Feature tests of the available routes are provided, therefore you can test the project like this:
+First of all you should copy ``.env.testing`` to ``.env``.
+
+The tests will run on ``sqlite``.
+
+Feature tests are available for all routes, therefore you can test the project like this:
 
 ``vendor/bin/phpunit``
 

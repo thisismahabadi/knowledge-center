@@ -32,8 +32,6 @@ class ShowArticleTest extends TestCase
             ->assertSee('created_at')
             ->assertSee('updated_at')
             ->assertSee('deleted_at');
-
-        Article::find($article->id)->forceDelete();
     }
 
     /**

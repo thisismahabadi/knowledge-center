@@ -30,8 +30,6 @@ class RateArticleTest extends TestCase
             ]);
 
         $response->assertStatus(201);
-
-        Article::find($articleId)->forceDelete();
     }
 
     /**
@@ -56,8 +54,6 @@ class RateArticleTest extends TestCase
             ]);
 
         $response->assertStatus(500);
-
-        Article::find($article->id)->forceDelete();
     }
 
     /**
@@ -76,8 +72,6 @@ class RateArticleTest extends TestCase
             ->post("/api/articles/$article->id/rate");
 
         $response->assertStatus(422);
-
-        Article::find($article->id)->forceDelete();
     }
 
     /**
@@ -98,8 +92,6 @@ class RateArticleTest extends TestCase
             ]);
 
         $response->assertStatus(422);
-
-        Article::find($article->id)->forceDelete();
     }
 
     /**
@@ -144,7 +136,5 @@ class RateArticleTest extends TestCase
         ]);
 
         $response->assertStatus(500);
-
-        Article::whereIn('id', $articles)->forceDelete();
     }
 }
