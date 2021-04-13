@@ -53,7 +53,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e): object
     {
         if ($e instanceof ValidationException) {
-            return (new Controller)->setResponse(Controller::ERROR, $e->getMessage() ?: "An error occurred.", Response::HTTP_UNPROCESSABLE_ENTITY);
+            return (new Controller)->setResponse(Controller::ERROR, $e->errors() ?: "An error occurred.", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return (new Controller)->setResponse(Controller::ERROR, $e->getMessage() ?: "An error occurred.", method_exists($e, 'getStatusCode') ? $e->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR);
