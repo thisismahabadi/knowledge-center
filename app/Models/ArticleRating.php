@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Article;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -64,5 +65,22 @@ class ArticleRating extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Rate an article.
+     *
+     * @param array $data
+     *
+     * @return object
+     */
+    public function store(array $data): object
+    {
+        Article::findOrFail($data['article_id']);
+
+        $this->isEligible($data['ip_address']);
+        $this->hasRated($data['article_id'], $data['ip_address']);
+
+        return self::create($data);
     }
 }
