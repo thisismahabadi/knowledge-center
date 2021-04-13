@@ -28,6 +28,16 @@ class Article extends Model
     public $article;
 
     /**
+     * Get the categories for the article.
+     *
+     * @return object
+     */
+    public function categories(): object
+    {
+        return $this->hasMany(ArticleCategory::class, 'article_id', 'id');
+    }
+
+    /**
      * Initiate a new object if nothing passed.
      *
      * @param Article $article
@@ -58,8 +68,9 @@ class Article extends Model
     {
         if ($categories) {
             $this->article = $this->article
-                ->join('article_categories', 'articles.id', '=', 'article_categories.article_id')
-                ->whereIn('article_categories.category_id', $categories);
+                ->whereHas('categories', function($query) use($categories) {
+                    $query->whereIn('category_id', $categories);
+                });
         }
 
         return $this;
@@ -100,8 +111,8 @@ class Article extends Model
                 case 'view':
                     $this->article = $this->article
                         ->join('article_views', 'articles.id', '=', 'article_views.article_id')
-                        ->groupBy('articles.id')
-                        ->select([\DB::raw('COUNT(articles.id) as total_views'), 'articles.*'])
+                        ->groupBy('article_views.article_id')
+                        ->select([\DB::raw('COUNT(article_views.article_id) as total_views'), 'articles.*'])
                         ->orderBy('total_views', 'desc');
                     break;
 

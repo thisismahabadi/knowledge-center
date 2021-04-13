@@ -48,8 +48,6 @@ Allright, now you can serve the project:
 
 # Testing
 
-First of all you should copy ``.env.testing`` to ``.env``.
-
 The tests will run on ``sqlite``.
 
 Feature tests are available for all routes, therefore you can test the project like this:
