@@ -12,6 +12,25 @@ class CreateArticleTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Article object id.
+     *
+     * @var int
+     */
+    public $article;
+
+    /**
+     * Test initial setup.
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->article = Article::factory()->make();
+    }
+
+    /**
      * Test create an article.
      *
      * @return void
@@ -19,8 +38,8 @@ class CreateArticleTest extends TestCase
     public function testCreateArticle(): void
     {
         $response = $this->postJson('/api/articles', [
-                'title' => 'Test title',
-                'body' => 'Test body detail',
+                'title' => $this->article->title,
+                'body' => $this->article->body,
             ]);
 
         $response->assertStatus(201);

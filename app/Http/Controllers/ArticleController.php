@@ -67,9 +67,8 @@ class ArticleController extends Controller
             ->filterByCreationDate($request->date)
             ->sortByViews($request->sort, $request->view_date)
             ->sortByPopularity($request->sort)
-            ->limit($request->limit)
             ->searchByTitleOrBody($request->search)
-            ->fetch();
+            ->fetch($request->limit);
 
         return $this->setResponse(self::SUCCESS, $articles, Response::HTTP_OK);
     }

@@ -158,23 +158,6 @@ class Article extends Model
     }
 
     /**
-     * Limit articles and show records with specified size.
-     *
-     * @param int|null $limitSize
-     *
-     * @return object
-     */
-    public function limit(?int $limitSize): object
-    {
-        if ($limitSize) {
-            $this->article = $this->article
-                ->take($limitSize);
-        }
-
-        return $this;
-    }
-
-    /**
      * Search in the article's title or body.
      *
      * @param string|null $search
@@ -195,11 +178,14 @@ class Article extends Model
     /**
      * Fetch the articles result object.
      *
+     * @param int|null $limitSize
+     *
      * @return object
      */
-    public function fetch(): object
+    public function fetch(?int $limitSize = 100): object
     {
         return $this->article
+            ->limit($limitSize)
             ->get();
     }
 }

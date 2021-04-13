@@ -19,6 +19,13 @@ class RateArticleTest extends TestCase
     public $article;
 
     /**
+     * Article mock object.
+     *
+     * @var object
+     */
+    public $articleMock;
+
+    /**
      * Test initial setup.
      *
      * @return void
@@ -29,6 +36,7 @@ class RateArticleTest extends TestCase
 
         $article = Article::factory()->create();
 
+        $this->articleMock = Article::factory()->make();
         $this->article = $article->id;
     }
 
@@ -40,8 +48,8 @@ class RateArticleTest extends TestCase
     public function testCreateNewArticleAndRateArticle(): void
     {
         $article = $this->postJson('/api/articles', [
-                'title' => 'Test title',
-                'body' => 'Test body detail',
+                'title' => $this->articleMock->title,
+                'body' => $this->articleMock->body,
             ]);
 
         $articleId = json_decode($article->getContent())->data->id;
@@ -60,12 +68,12 @@ class RateArticleTest extends TestCase
      */
     public function testRateArticleMultipleTimes(): void
     {
-        $this->postJson("/api/articles/$this->article->id/rate", [
+        $this->postJson("/api/articles/$this->article/rate", [
             'score' => 5,
         ]);
 
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson("/api/articles/$this->article->id/rate", [
+            ->postJson("/api/articles/$this->article/rate", [
                 'score' => 5,
             ]);
 
@@ -80,7 +88,7 @@ class RateArticleTest extends TestCase
     public function testRateArticleWithoutRequiredFields(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->post("/api/articles/$this->article->id/rate");
+            ->post("/api/articles/$this->article/rate");
 
         $response->assertStatus(422);
     }
@@ -93,7 +101,7 @@ class RateArticleTest extends TestCase
     public function testRateArticleWithFalseScore(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson("/api/articles/$this->article->id/rate", [
+            ->postJson("/api/articles/$this->article/rate", [
                 'score' => 3.5,
             ]);
 
