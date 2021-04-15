@@ -15,6 +15,20 @@ class ArticleViewFactory extends Factory
     protected $model = ArticleView::class;
 
     /**
+     * The article record counts from.
+     *
+     * @var int
+     */
+    CONST ARTICLE_RECORD_COUNTS_FROM = 1;
+
+    /**
+     * The article record counts to.
+     *
+     * @var int
+     */
+    CONST ARTICLE_RECORD_COUNTS_TO = 1000;
+
+    /**
      * Define the model's default state.
      *
      * @return array
@@ -22,7 +36,7 @@ class ArticleViewFactory extends Factory
     public function definition()
     {
         return [
-            'article_id' => $this->faker->numberBetween(1, 1000),
+            'article_id' => $this->faker->numberBetween(self::ARTICLE_RECORD_COUNTS_FROM, self::ARTICLE_RECORD_COUNTS_TO),
             'ip_address' => $this->faker->ipv4,
         ];
     }

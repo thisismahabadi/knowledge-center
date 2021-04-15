@@ -26,8 +26,7 @@ class ArticlesListRequest extends FormRequest
         return [
             'categories' => 'array',
             'date' => 'array',
-            'sort' => 'string',
-            'view_date' => 'date',
+            'sort' => 'array',
             'limit' => 'integer',
             'search' => 'string',
         ];

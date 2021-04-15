@@ -8,12 +8,19 @@ use Illuminate\Database\Seeder;
 class ArticleSeeder extends Seeder
 {
     /**
+     * The article record to seed.
+     *
+     * @var int
+     */
+    CONST ARTICLE_RECORD_TO_SEED = 1000;
+
+    /**
      * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        Article::factory(1000)->create();
+        Article::factory(self::ARTICLE_RECORD_TO_SEED)->create();
     }
 }

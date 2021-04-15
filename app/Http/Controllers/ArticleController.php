@@ -46,7 +46,7 @@ class ArticleController extends Controller
     {
         $article = Article::create($request->all());
 
-        (new ArticleCategory)->assignCategory($request->categories, $article->id);
+        ArticleCategory::assignCategory($request->categories, $article->id);
 
         return $this->setResponse(self::SUCCESS, $article, Response::HTTP_CREATED);
     }
@@ -65,8 +65,7 @@ class ArticleController extends Controller
         $articles = (new Article)->init()
             ->filterByCategories($request->categories)
             ->filterByCreationDate($request->date)
-            ->sortByViews($request->sort, $request->view_date)
-            ->sortByPopularity($request->sort)
+            ->sort($request->sort)
             ->searchByTitleOrBody($request->search)
             ->fetch($request->limit);
 

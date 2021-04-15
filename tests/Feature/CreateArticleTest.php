@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Article;
+use App\Models\Category;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -31,18 +33,52 @@ class CreateArticleTest extends TestCase
     }
 
     /**
-     * Test create an article.
+     * Test create an article without categories.
      *
      * @return void
      */
-    public function testCreateArticle(): void
+    public function testCreateArticleWithoutCategories(): void
     {
         $response = $this->postJson('/api/articles', [
                 'title' => $this->article->title,
                 'body' => $this->article->body,
             ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
+    }
+
+    /**
+     * Test create an article with categories.
+     *
+     * @return void
+     */
+    public function testCreateArticleWithCategories(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->postJson('/api/articles', [
+                'title' => $this->article->title,
+                'body' => $this->article->body,
+                'categories' => [$category->id],
+            ]);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+    }
+
+    /**
+     * Test create an article with unavailable category.
+     *
+     * @return void
+     */
+    public function testCreateArticleWithUnavailableCategory(): void
+    {
+        $response = $this->postJson('/api/articles', [
+            'title' => $this->article->title,
+            'body' => $this->article->body,
+            'categories' => [11111111111],
+        ]);
+
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -55,7 +91,7 @@ class CreateArticleTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->post('/api/articles');
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -71,6 +107,6 @@ class CreateArticleTest extends TestCase
                 'body[]' => 2,
             ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

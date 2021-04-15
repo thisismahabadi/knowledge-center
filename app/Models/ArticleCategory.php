@@ -29,13 +29,12 @@ class ArticleCategory extends Model
      *
      * @return void
      */
-    public function assignCategory(?array $categories, int $articleId): void
+    public static function assignCategory(?array $categories, int $articleId): void
     {
         if ($categories) {
             foreach ($categories as $category) {
-                if (! Category::find($category)) {
-                    throw new \Exception('Category is not exists.');
-                }
+                // To prevent creation if a category does not exist.
+                Category::findOrFail($category);
 
                 self::create([
                     'article_id' => $articleId,

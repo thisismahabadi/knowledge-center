@@ -5,12 +5,32 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Article;
 use App\Models\Category;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ArticlesListTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * Article object id.
+     *
+     * @var int
+     */
+    public $article;
+
+    /**
+     * Test initial setup.
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->article = Article::factory()->create();
+    }
 
     /**
      * Test that articles list are correct.
@@ -23,7 +43,7 @@ class ArticlesListTest extends TestCase
 
         $response = $this->get('/api/articles');
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertSee('id')
             ->assertSee('title')
             ->assertSee('body')
@@ -43,7 +63,7 @@ class ArticlesListTest extends TestCase
 
         $response = $this->get("/api/articles?categories[]=$category->id");
 
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -56,7 +76,7 @@ class ArticlesListTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get("/api/articles?categories=hello");
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -68,7 +88,7 @@ class ArticlesListTest extends TestCase
     {
         $response = $this->get('/api/articles?date[start]=2020-01-01');
 
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -81,7 +101,7 @@ class ArticlesListTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?date=2020');
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -91,9 +111,9 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListSortByRightStructureView(): void
     {
-        $response = $this->get('/api/articles?sort=view');
+        $response = $this->get('/api/articles?sort[type]=view');
 
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -104,9 +124,21 @@ class ArticlesListTest extends TestCase
     public function testArticlesListSortByFalseStructureView(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->get('/api/articles?sort[]=view');
+            ->get('/api/articles?sort=view');
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /**
+     * Test that articles list sort by views are correct with correct view date.
+     *
+     * @return void
+     */
+    public function testArticlesListSortByRightStructureViewWithCorrectViewDate(): void
+    {
+        $response = $this->get('/api/articles?sort=view&sort[view_date]=2020-01-01');
+
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -116,22 +148,9 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListPopularityByRightStructureView(): void
     {
-        $response = $this->get('/api/articles?sort=popularity');
+        $response = $this->get('/api/articles?sort[type]=popularity');
 
-        $response->assertStatus(200);
-    }
-
-    /**
-     * Test that articles list sort by popularity are not correct if popularity send without string structure.
-     *
-     * @return void
-     */
-    public function testArticlesListPopularityByFalseStructureView(): void
-    {
-        $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->get('/api/articles?sort[]=popularity');
-
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -143,7 +162,7 @@ class ArticlesListTest extends TestCase
     {
         $response = $this->get('/api/articles?limit=10');
 
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -156,7 +175,7 @@ class ArticlesListTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?limit=error');
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -168,7 +187,7 @@ class ArticlesListTest extends TestCase
     {
         $response = $this->get('/api/articles?search=A');
 
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -181,6 +200,6 @@ class ArticlesListTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->get('/api/articles?search[]=1');
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }
