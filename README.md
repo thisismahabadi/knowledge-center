@@ -50,6 +50,8 @@ Allright, now you can serve the project:
 
 The tests will run on ``sqlite``.
 
+Make sure that you have installed php's sqlite extension.
+
 Feature tests are available for all routes, therefore you can test the project like this:
 
 ``vendor/bin/phpunit``
