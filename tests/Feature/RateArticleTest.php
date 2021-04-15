@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Article;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -58,7 +59,7 @@ class RateArticleTest extends TestCase
                 'score' => 5,
             ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     /**
@@ -77,7 +78,7 @@ class RateArticleTest extends TestCase
                 'score' => 5,
             ]);
 
-        $response->assertStatus(500);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -90,7 +91,7 @@ class RateArticleTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->post("/api/articles/$this->article/rate");
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -105,7 +106,7 @@ class RateArticleTest extends TestCase
                 'score' => 3.5,
             ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -120,7 +121,7 @@ class RateArticleTest extends TestCase
                 'score' => 1,
             ]);
 
-        $response->assertStatus(500);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -146,6 +147,6 @@ class RateArticleTest extends TestCase
             'score' => 2,
         ]);
 
-        $response->assertStatus(500);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

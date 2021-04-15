@@ -46,7 +46,7 @@ class ArticleController extends Controller
     {
         $article = Article::create($request->all());
 
-        (new ArticleCategory)->assignCategory($request->categories, $article->id);
+        ArticleCategory::assignCategory($request->categories, $article->id);
 
         return $this->setResponse(self::SUCCESS, $article, Response::HTTP_CREATED);
     }

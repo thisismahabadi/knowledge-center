@@ -23,6 +23,13 @@ class ArticleRating extends Model
     ];
 
     /**
+     * The rate limit per day.
+     *
+     * @var int
+     */
+    CONST RATE_LIMIT_PER_DAY = 10;
+
+    /**
      * Check if an user is eligible to rate today or not.
      *
      * @param $ipAddress
@@ -33,12 +40,12 @@ class ArticleRating extends Model
      */
     public function isEligible($ipAddress): bool
     {
-        $rate = self::where('ip_address', $ipAddress);
-        $todayRates = $rate->whereDate('created_at', date('Y-m-d'))
+        $todayRates = self::where('ip_address', $ipAddress)
+            ->whereDate('created_at', date('Y-m-d'))
             ->count();
 
-        if ($todayRates >= 10) {
-            throw new \Exception('You just can rate the articles 10 times a day.');
+        if ($todayRates >= self::RATE_LIMIT_PER_DAY) {
+            throw new \Exception('You just can rate ' . self::RATE_LIMIT_PER_DAY . ' articles per day.');
         }
 
         return true;

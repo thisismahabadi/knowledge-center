@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Article;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -42,7 +43,7 @@ class CreateArticleTest extends TestCase
                 'body' => $this->article->body,
             ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     /**
@@ -55,7 +56,7 @@ class CreateArticleTest extends TestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->post('/api/articles');
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -71,6 +72,6 @@ class CreateArticleTest extends TestCase
                 'body[]' => 2,
             ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

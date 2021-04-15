@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'articles', 'middleware' => 'throttle:10000000'], function () {
-	Route::post('/{articleId}/rate', 'App\Http\Controllers\ArticleController@rate');
-	Route::post('/', 'App\Http\Controllers\ArticleController@create');
-	Route::get('/', 'App\Http\Controllers\ArticleController@get');
-	Route::get('/{articleId}', 'App\Http\Controllers\ArticleController@show');
+	Route::post('/{articleId}/rate', 'ArticleController@rate');
+	Route::post('/', 'ArticleController@create');
+	Route::get('/', 'ArticleController@get');
+	Route::get('/{articleId}', 'ArticleController@show');
 });

@@ -120,3 +120,5 @@ Also note that the articles with zero views will not be listed when you try to g
 - [ ] Improve query performances.
 - [ ] Imrpove error handling.
 - [ ] Dockerizing.
+- [ ] Implement Horizon package.
+- [ ] Implement fuzzy search.

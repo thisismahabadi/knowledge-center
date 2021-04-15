@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Article;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -22,7 +23,7 @@ class ShowArticleTest extends TestCase
 
         $response = $this->get("/api/articles/$article->id");
 
-        $response->assertStatus(200)
+        $response->assertStatus(Response::HTTP_OK)
             ->assertSee('id')
             ->assertSee('title')
             ->assertSee('body')
@@ -40,6 +41,6 @@ class ShowArticleTest extends TestCase
     {
         $response = $this->get('/api/articles/11111111111');
 
-        $response->assertStatus(500);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
