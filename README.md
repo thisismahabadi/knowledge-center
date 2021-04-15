@@ -89,8 +89,7 @@ Also note that the articles with zero views will not be listed when you try to g
 
         'categories' => 'array'
         'date' => 'array'
-        'sort' => 'string'
-        'view_date' => 'date'
+        'sort' => 'array'
         'limit' => 'integer'
         'search' => 'string'
 

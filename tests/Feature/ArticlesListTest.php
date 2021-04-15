@@ -14,6 +14,25 @@ class ArticlesListTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * Article object id.
+     *
+     * @var int
+     */
+    public $article;
+
+    /**
+     * Test initial setup.
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->article = Article::factory()->create();
+    }
+
+    /**
      * Test that articles list are correct.
      *
      * @return void
@@ -92,7 +111,7 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListSortByRightStructureView(): void
     {
-        $response = $this->get('/api/articles?sort=view');
+        $response = $this->get('/api/articles?sort[type]=view');
 
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -105,9 +124,21 @@ class ArticlesListTest extends TestCase
     public function testArticlesListSortByFalseStructureView(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->get('/api/articles?sort[]=view');
+            ->get('/api/articles?sort=view');
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /**
+     * Test that articles list sort by views are correct with correct view date.
+     *
+     * @return void
+     */
+    public function testArticlesListSortByRightStructureViewWithCorrectViewDate(): void
+    {
+        $response = $this->get('/api/articles?sort=view&sort[view_date]=2020-01-01');
+
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     /**
@@ -117,22 +148,9 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListPopularityByRightStructureView(): void
     {
-        $response = $this->get('/api/articles?sort=popularity');
+        $response = $this->get('/api/articles?sort[type]=popularity');
 
         $response->assertStatus(Response::HTTP_OK);
-    }
-
-    /**
-     * Test that articles list sort by popularity are not correct if popularity send without string structure.
-     *
-     * @return void
-     */
-    public function testArticlesListPopularityByFalseStructureView(): void
-    {
-        $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->get('/api/articles?sort[]=popularity');
-
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**

@@ -65,8 +65,7 @@ class ArticleController extends Controller
         $articles = (new Article)->init()
             ->filterByCategories($request->categories)
             ->filterByCreationDate($request->date)
-            ->sortByViews($request->sort, $request->view_date)
-            ->sortByPopularity($request->sort)
+            ->sort($request->sort)
             ->searchByTitleOrBody($request->search)
             ->fetch($request->limit);
 
