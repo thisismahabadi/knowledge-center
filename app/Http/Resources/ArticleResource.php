@@ -18,6 +18,7 @@ class ArticleResource extends JsonResource
             'id' => $this->resource->id,
             'title' => $this->resource->title,
             'body' => $this->resource->body,
+            'view_count' => $this->resource->view_count,
             'categories' => CategoryResource::collection($this->resource->categories),
         ];
     }

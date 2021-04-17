@@ -21,6 +21,7 @@ class ArticleRatingSeeder extends Seeder
      */
     public function run()
     {
-        ArticleRating::factory(self::ARTICLE_RATING_RECORD_TO_SEED)->create();
+        ArticleRating::factory(self::ARTICLE_RATING_RECORD_TO_SEED)
+            ->create();
     }
 }
