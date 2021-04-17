@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Article;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,39 +19,4 @@ class ArticleView extends Model
         'article_id',
         'ip_address',
     ];
-
-    /**
-     * Check if an ip address has viewed an article.
-     *
-     * @param int $articleId
-     * @param $ipAddress
-     *
-     * @return int
-     */
-    public function hasViewed(int $articleId, $ipAddress): int
-    {
-        $view = self::where('article_id', $articleId)
-            ->where('ip_address', $ipAddress)
-            ->count();
-
-        return $view;
-    }
-
-    /**
-     * Create a log if an ip address has not viewed an article.
-     *
-     * @param int $articleId
-     * @param $ipAddress
-     *
-     * @return void
-     */
-    public function logView(int $articleId, $ipAddress): void
-    {
-        if (! $this->hasViewed($articleId, $ipAddress)) {
-            self::create([
-                'article_id' => $articleId,
-                'ip_address' => $ipAddress,
-            ]);
-        }
-    }
 }

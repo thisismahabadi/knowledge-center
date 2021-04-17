@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateArticleRequest extends FormRequest
@@ -27,6 +28,7 @@ class CreateArticleRequest extends FormRequest
             'title' => 'required|string',
             'body' => 'required|string',
             'categories' => 'array',
+            'categories.*' => Rule::exists('categories', 'id'),
         ];
     }
 }

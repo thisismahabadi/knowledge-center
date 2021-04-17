@@ -26,10 +26,7 @@ class ShowArticleTest extends TestCase
         $response->assertStatus(Response::HTTP_OK)
             ->assertSee('id')
             ->assertSee('title')
-            ->assertSee('body')
-            ->assertSee('created_at')
-            ->assertSee('updated_at')
-            ->assertSee('deleted_at');
+            ->assertSee('body');
     }
 
     /**

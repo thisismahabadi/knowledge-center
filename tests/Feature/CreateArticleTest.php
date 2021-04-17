@@ -78,7 +78,7 @@ class CreateArticleTest extends TestCase
             'categories' => [11111111111],
         ]);
 
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**

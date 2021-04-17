@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Article;
 use App\Models\ArticleRating;
+use App\Services\ArticleListService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ArticlePopularitySortTest extends TestCase
@@ -46,7 +47,7 @@ class ArticlePopularitySortTest extends TestCase
      */
     public function testWeightedRanking()
     {
-    	$articles = (new Article)->init()
+    	$articles = (new ArticleListService)->init()
 	    	->sortByPopularity('popularity')
 	    	->fetch();
 
