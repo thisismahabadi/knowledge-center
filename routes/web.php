@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Response;
-use App\Jobs\DatabaseSeedJob;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-	DatabaseSeedJob::dispatch();
-    return (new Controller)->setResponse(Controller::SUCCESS, 'Welcome to home page of knowledge center.', Response::HTTP_OK);
-})->middleware(['throttle:10000000']);
+Route::get('/', 'HomeController@index')->middleware(['throttle:10000000']);
