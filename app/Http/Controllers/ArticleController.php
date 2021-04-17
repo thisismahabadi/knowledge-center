@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
-use App\Models\ArticleView;
 use Illuminate\Http\Request;
-use App\Models\ArticleRating;
-use Illuminate\Http\Response;
-use App\Models\ArticleCategory;
 use App\Http\Requests\RateRequest;
+use App\Services\ArticleViewService;
+use App\Services\ArticleRateService;
+use App\Services\ArticleListService;
+use App\Http\Resources\RateResource;
+use App\Services\ArticleStoreService;
+use App\Http\Resources\ArticleResource;
 use App\Http\Requests\ArticlesListRequest;
 use App\Http\Requests\CreateArticleRequest;
 
@@ -19,74 +20,69 @@ class ArticleController extends Controller
      *
      * @param int $articleId
      * @param \App\Http\Requests\RateRequest $request
+     * @param \App\Services\ArticleRateService $service
      *
-     * @see \App\Models\ArticleRating::store(array $data)
+     * @see \App\Services\ArticleRateService::rate(int $articleId, RateRequest $request)
      *
      * @return object
      */
-    public function rate(int $articleId, RateRequest $request): object
+    public function rate(int $articleId, RateRequest $request, ArticleRateService $service): object
     {
-        $request->request->add(['article_id' => $articleId, 'ip_address' => \Request::ip()]);
+        $request->merge(['ip_address' => \Request::ip()]);
 
-        $rate = (new ArticleRating)->store($request->request->all());
+        $rate = $service->rate($articleId, $request);
 
-        return $this->setResponse(self::SUCCESS, $rate, Response::HTTP_CREATED);
+        return new RateResource($rate);
     }
 
     /**
      * Create a new article.
      *
      * @param \App\Http\Requests\CreateArticleRequest $request
+     * @param \App\Services\ArticleStoreService $service
      *
-     * @see \App\Models\ArticleCategory::assignCategory(array $categories, int $articleId)
+     * @see \App\Services\ArticleStoreService::create(CreateArticleRequest $request)
      *
      * @return object
      */
-    public function create(CreateArticleRequest $request): object
+    public function create(CreateArticleRequest $request, ArticleStoreService $service): object
     {
-        $article = Article::create($request->all());
+        $article = $service->create($request);
 
-        ArticleCategory::assignCategory($request->categories, $article->id);
-
-        return $this->setResponse(self::SUCCESS, $article, Response::HTTP_CREATED);
+        return new ArticleResource($article);
     }
 
     /**
      * Get the list of articles.
      *
      * @param \App\Http\Requests\ArticlesListRequest $request
+     * @param \App\Services\ArticleListService $service
      *
-     * @see \App\Models\Article
+     * @see \App\Services\ArticleListService::get(ArticlesListRequest $request)
      *
      * @return object
      */
-    public function get(ArticlesListRequest $request): object
+    public function get(ArticlesListRequest $request, ArticleListService $service): object
     {
-        $articles = (new Article)->init()
-            ->filterByCategories($request->categories)
-            ->filterByCreationDate($request->date)
-            ->sort($request->sort)
-            ->searchByTitleOrBody($request->search)
-            ->fetch($request->limit);
+        $articles = $service->get($request);
 
-        return $this->setResponse(self::SUCCESS, $articles, Response::HTTP_OK);
+        return ArticleResource::collection($articles);
     }
 
     /**
      * Show an article detail.
      *
      * @param int $articleId
+     * @param \App\Services\ArticleViewService $service
      *
-     * @see \App\Models\ArticleView::logView(int $articleId, $ipAddress)
+     * @see \App\Services\ArticleViewService::show(int $articleId)
      *
      * @return object
      */
-    public function show(int $articleId): object
+    public function show(int $articleId, ArticleViewService $service): object
     {
-        $article = Article::findOrFail($articleId);
+        $article = $service->show($articleId);
 
-        (new ArticleView)->logView($articleId, \Request::ip());
-
-        return $this->setResponse(self::SUCCESS, $article, Response::HTTP_OK);
+        return new ArticleResource($article);
     }
 }
