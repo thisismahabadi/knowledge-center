@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Models\ArticleRating;
+use App\Exceptions\RatingException;
 
 class ArticleRateService
 {
@@ -19,18 +20,18 @@ class ArticleRateService
      *
      * @param $ipAddress
      *
-     * @throws \Exception
+     * @throws \Exception\RatingException
      *
      * @return bool
      */
-    public function isEligible($ipAddress): bool
+    public function isDailyLimitRemained($ipAddress): bool
     {
         $todayRates = ArticleRating::where('ip_address', $ipAddress)
             ->whereDate('created_at', date('Y-m-d'))
             ->count();
 
         if ($todayRates >= self::RATE_LIMIT_PER_DAY) {
-            throw new \Exception('You just can rate ' . self::RATE_LIMIT_PER_DAY . ' articles per day.');
+            throw RatingException::dailyLimitExceeded(self::RATE_LIMIT_PER_DAY);
         }
 
         return true;
@@ -42,7 +43,7 @@ class ArticleRateService
      * @param int $articleId
      * @param $ipAddress
      *
-     * @throws \Exception
+     * @throws \Exception\RatingException
      *
      * @return bool
      */
@@ -50,10 +51,10 @@ class ArticleRateService
     {
         $rate = ArticleRating::where('ip_address', $ipAddress)
             ->where('article_id', $articleId)
-            ->count();
+            ->exists();
 
         if ($rate) {
-            throw new \Exception('You just can rate to an article once.');
+            throw RatingException::hasRated();
         }
 
         return false;
@@ -71,8 +72,11 @@ class ArticleRateService
     {
         $article = Article::findOrFail($articleId);
 
-        $this->isEligible($request->ip_address);
-        $this->hasRated($articleId, $request->ip_address);
+        $hasRated = $this->hasRated($articleId, $request->ip_address);
+
+        if (! $hasRated) {
+            $this->isDailyLimitRemained($request->ip_address);
+        }
 
         return $article->ratings()
             ->create([

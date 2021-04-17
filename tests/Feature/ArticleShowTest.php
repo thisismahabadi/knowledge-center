@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ShowArticleTest extends TestCase
+class ArticleShowTest extends TestCase
 {
     use RefreshDatabase;
 

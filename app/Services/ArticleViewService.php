@@ -29,8 +29,6 @@ class ArticleViewService
      *
      * @param int $articleId
      *
-     * @see \App\Models\ArticleView::logView(int $articleId, $ipAddress)
-     *
      * @return object
      */
     public function show(int $articleId): object

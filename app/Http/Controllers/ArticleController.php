@@ -3,49 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\RateRequest;
 use App\Services\ArticleViewService;
-use App\Services\ArticleRateService;
 use App\Services\ArticleListService;
-use App\Http\Resources\RateResource;
 use App\Services\ArticleStoreService;
 use App\Http\Resources\ArticleResource;
 use App\Http\Requests\ArticlesListRequest;
-use App\Http\Requests\CreateArticleRequest;
+use App\Http\Requests\ArticleStoreRequest;
 
 class ArticleController extends Controller
 {
     /**
-     * Rate an article.
-     *
-     * @param int $articleId
-     * @param \App\Http\Requests\RateRequest $request
-     * @param \App\Services\ArticleRateService $service
-     *
-     * @see \App\Services\ArticleRateService::rate(int $articleId, RateRequest $request)
-     *
-     * @return object
-     */
-    public function rate(int $articleId, RateRequest $request, ArticleRateService $service): object
-    {
-        $request->merge(['ip_address' => \Request::ip()]);
-
-        $rate = $service->rate($articleId, $request);
-
-        return new RateResource($rate);
-    }
-
-    /**
      * Create a new article.
      *
-     * @param \App\Http\Requests\CreateArticleRequest $request
+     * @param \App\Http\Requests\ArticleStoreRequest $request
      * @param \App\Services\ArticleStoreService $service
      *
-     * @see \App\Services\ArticleStoreService::create(CreateArticleRequest $request)
+     * @see \App\Services\ArticleStoreService::create(object $request)
      *
      * @return object
      */
-    public function create(CreateArticleRequest $request, ArticleStoreService $service): object
+    public function create(ArticleStoreRequest $request, ArticleStoreService $service): object
     {
         $article = $service->create($request);
 
@@ -58,7 +35,7 @@ class ArticleController extends Controller
      * @param \App\Http\Requests\ArticlesListRequest $request
      * @param \App\Services\ArticleListService $service
      *
-     * @see \App\Services\ArticleListService::get(ArticlesListRequest $request)
+     * @see \App\Services\ArticleListService::get(object $request)
      *
      * @return object
      */

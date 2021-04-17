@@ -35,4 +35,14 @@ class ArticleView extends Model
         'article_id',
         'ip_address',
     ];
+
+    /**
+     * Get the article related to the view.
+     *
+     * @return object
+     */
+    public function article(): object
+    {
+        return $this->belongsTo(Article::class);
+    }
 }
