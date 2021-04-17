@@ -183,11 +183,11 @@ class ArticleListService
     public function searchByTitleOrBody(?string $search): object
     {
         if ($search) {
-            $search = '%' . $search . '%';
+            $search = "%{$search}%";
 
             $this->article = $this->article
                 ->where('articles.title', 'LIKE', $search)
-                ->orWhere('articles.body', 'LIKE', $search);
+                ->where('articles.body', 'LIKE', $search);
         }
 
         return $this;
