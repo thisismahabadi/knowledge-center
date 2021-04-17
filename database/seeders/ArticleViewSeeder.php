@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Api\Models\Article;
 use App\Models\ArticleView;
 use Illuminate\Database\Seeder;
 
@@ -21,6 +22,7 @@ class ArticleViewSeeder extends Seeder
      */
     public function run()
     {
-        ArticleView::factory(self::ARTICLE_VIEW_RECORD_TO_SEED)->create();
+        ArticleView::factory(self::ARTICLE_VIEW_RECORD_TO_SEED)
+            ->create();
     }
 }

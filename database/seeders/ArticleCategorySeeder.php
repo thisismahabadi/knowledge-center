@@ -21,6 +21,7 @@ class ArticleCategorySeeder extends Seeder
      */
     public function run()
     {
-        ArticleCategory::factory(self::ARTICLE_CATEGORY_RECORD_TO_SEED)->create();
+        ArticleCategory::factory(self::ARTICLE_CATEGORY_RECORD_TO_SEED)
+            ->create();
     }
 }

@@ -149,10 +149,7 @@ class ArticleListService
         $this->sortByViewsWithViewDate($viewDate);
 
         $this->article = $this->article
-            ->join('article_views', 'articles.id', '=', 'article_views.article_id')
-            ->groupBy('article_views.article_id')
-            ->select([\DB::raw('COUNT(article_views.article_id) as total_views'), 'articles.*'])
-            ->orderBy('total_views', 'desc');
+            ->orderBy('articles.view_count', 'desc');
 
         return $this;
     }
@@ -186,11 +183,11 @@ class ArticleListService
     public function searchByTitleOrBody(?string $search): object
     {
         if ($search) {
-            $search = '%' . $search . '%';
+            $search = "%{$search}%";
 
             $this->article = $this->article
                 ->where('articles.title', 'LIKE', $search)
-                ->orWhere('articles.body', 'LIKE', $search);
+                ->where('articles.body', 'LIKE', $search);
         }
 
         return $this;
