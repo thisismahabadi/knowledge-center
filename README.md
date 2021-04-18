@@ -79,6 +79,10 @@ A user can rate to articles with integer score numbers between 1 to 5.
 
 A ``view log`` will register via every show request on articles. It means every time user request to visit an article a ``new view`` will recorded. but it limited by ``IP Address``.
 
+The ``view log`` strategy is implemented with ``Laravel Queue`` so remember to run queue to register.
+
+``php artisan queue:listen --timeout=0``
+
 A user (an IP address) may only rate once to an article and only 10 times total in the last day.
 
 Also note that the articles with zero views will not be listed when you try to get list of articles and sort them by views at the same time, but they will be showed if user doesn't specify sorting based on view.
