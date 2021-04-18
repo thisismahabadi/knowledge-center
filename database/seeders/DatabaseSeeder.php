@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Factories\ArticleFactory;
+use Database\Factories\CategoryFactory;
+use Database\Factories\ArticleViewFactory;
+use Database\Factories\ArticleRatingFactory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,14 +17,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-
-        $this->call([
-            CategorySeeder::class,
-            ArticleSeeder::class,
-            ArticleCategorySeeder::class,
-            ArticleRatingSeeder::class,
-            ArticleViewSeeder::class,
-        ]);
+        CategoryFactory::new()
+            ->count(10)
+            ->has(
+                ArticleFactory::new()
+                    ->count(100)
+                    ->has(
+                        ArticleRatingFactory::new()
+                            ->count(10)
+                    )
+                    ->has(
+                        ArticleViewFactory::new()
+                            ->count(100)
+                    )
+            )->create();
     }
 }

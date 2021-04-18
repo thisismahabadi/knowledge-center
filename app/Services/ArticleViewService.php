@@ -29,8 +29,6 @@ class ArticleViewService
      *
      * @param int $articleId
      *
-     * @see \App\Models\ArticleView::logView(int $articleId, $ipAddress)
-     *
      * @return object
      */
     public function show(int $articleId): object
@@ -38,7 +36,7 @@ class ArticleViewService
         $article = Article::findOrFail($articleId);
 
         if (! $this->hasViewed($articleId, \Request::ip())) {
-            $article->views()
+            $article->articleView()
                 ->create([
                     'ip_address' => \Request::ip(),
                 ]);
