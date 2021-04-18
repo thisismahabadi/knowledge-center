@@ -3,9 +3,9 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Models\Article;
-use App\Models\ArticleRating;
 use App\Services\ArticleListService;
+use Database\Factories\ArticleFactory;
+use Database\Factories\ArticleRatingFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ArticlePopularitySortTest extends TestCase
@@ -21,20 +21,19 @@ class ArticlePopularitySortTest extends TestCase
     {
         parent::setUp();
 
-        $firstArticle = Article::factory()->create();
-        $secondArticle = Article::factory()->create();
+        $firstArticle = ArticleFactory::new()
+            ->has(
+                ArticleRatingFactory::new(['score' => 5])
+                    ->count(3)
+            )
+            ->create();
 
-        ArticleRating::factory()->create([
-            'article_id' => $secondArticle->id,
-            'score' => 5,
-        ]);
-
-        for ($i = 0; $i < 4; $i++) { 
-            ArticleRating::factory()->create([
-                'article_id' => $firstArticle->id,
-                'score' => 5,
-            ]);
-        }
+        $secondArticle = ArticleFactory::new()
+            ->has(
+                ArticleRatingFactory::new(['score' => 5])
+                    ->count(5)
+            )
+            ->create();
     }
 
     /**
@@ -51,11 +50,6 @@ class ArticlePopularitySortTest extends TestCase
 	    	->sortByPopularity(['type' => 'popularity'])
 	    	->fetch();
 
-    	$numbers = [];
-    	foreach ($articles as $article) {
-    		$numbers[] = $article->id;
-    	}
-
-        $this->assertGreaterThan($numbers[0], $numbers[1]);
+        $this->assertGreaterThan($articles[1]->id, $articles[0]->id);
     }
 }

@@ -59,7 +59,12 @@ class ArticleRatingTest extends TestCase
                 'score' => 5,
             ]);
 
-        $response->assertStatus(Response::HTTP_CREATED);
+        $rate = json_decode($response->getContent())->data;
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonPath('data.id', $rate->id)
+            ->assertJsonPath('data.article_id', $rate->article_id)
+            ->assertJsonPath('data.score', $rate->score);
     }
 
     /**
@@ -78,7 +83,10 @@ class ArticleRatingTest extends TestCase
                 'score' => 5,
             ]);
 
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
+            ->assertExactJson([
+                'data' => ['error_message' => 'You just can rate to an article once.']
+            ]);
     }
 
     /**
@@ -143,10 +151,15 @@ class ArticleRatingTest extends TestCase
             ]);
         }
 
-        $response = $this->postJson("/api/articles/$articles[0]/rate", [
+        $article = Article::factory()->create();
+
+        $response = $this->postJson("/api/articles/$article->id/rate", [
             'score' => 2,
         ]);
 
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
+            ->assertExactJson([
+                'data' => ['error_message' => 'You just can rate 10 articles per day.']
+            ]);
     }
 }
