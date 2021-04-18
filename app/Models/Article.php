@@ -29,7 +29,7 @@ class Article extends Model
      *
      * @return object
      */
-    public function views(): object
+    public function articleView(): object
     {
         return $this->hasMany(ArticleView::class);
     }
@@ -39,7 +39,7 @@ class Article extends Model
      *
      * @return object
      */
-    public function ratings(): object
+    public function articleRating(): object
     {
         return $this->hasMany(ArticleRating::class);
     }

@@ -36,7 +36,7 @@ class ArticleViewService
         $article = Article::findOrFail($articleId);
 
         if (! $this->hasViewed($articleId, \Request::ip())) {
-            $article->views()
+            $article->articleView()
                 ->create([
                     'ip_address' => \Request::ip(),
                 ]);

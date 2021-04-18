@@ -48,7 +48,7 @@ class ArticlePopularitySortTest extends TestCase
     public function testWeightedRanking()
     {
     	$articles = (new ArticleListService)->init()
-	    	->sortByPopularity('popularity')
+	    	->sortByPopularity(['type' => 'popularity'])
 	    	->fetch();
 
     	$numbers = [];

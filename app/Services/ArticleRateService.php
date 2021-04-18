@@ -78,7 +78,7 @@ class ArticleRateService
             $this->isDailyLimitRemained($request->ip_address);
         }
 
-        return $article->ratings()
+        return $article->articleRating()
             ->create([
                     'ip_address' => $request->ip_address,
                     'score' => $request->score,

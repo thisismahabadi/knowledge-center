@@ -94,29 +94,6 @@ class ArticleListService
     }
 
     /**
-     * Sort articles based on given parameter.
-     *
-     * @param array|null $sort
-     *
-     * @return object
-     */
-    public function sort(?array $sort): object
-    {
-        switch (isset($sort['type'])) {
-            case self::SORT_BY_VIEW:
-                return $this->sortByViews(self::SORT_BY_VIEW, $sort['view_date'] ?? null);
-                break;
-            case self::SORT_BY_POPULARITY:
-                return $this->sortByPopularity(self::SORT_BY_POPULARITY);
-                break;
-
-            default:
-                return $this;
-                break;
-        }
-    }
-
-    /**
      * Sort articles by their view numbers with view date.
      *
      * @param string|null $viewDate
@@ -137,19 +114,22 @@ class ArticleListService
     /**
      * Sort articles by their view numbers.
      *
-     * @param string|null $sort
-     * @param string|null $viewDate
+     * @param array|null $sort
      *
      * @see App\Models\Article::sortByViewsWithViewDate(?string $viewDate)
      *
      * @return object
      */
-    public function sortByViews(?string $sort, ?string $viewDate): object
+    public function sortByViews(?array $sort): object
     {
-        $this->sortByViewsWithViewDate($viewDate);
+        if (isset($sort['type']) && $sort['type'] === self::SORT_BY_VIEW) {
+            if (isset($sort['view_date'])) {
+                $this->sortByViewsWithViewDate($sort['view_date']);
+            }
 
-        $this->article = $this->article
-            ->orderBy('articles.view_count', 'desc');
+            $this->article = $this->article
+                ->orderBy('articles.view_count', 'desc');
+        }
 
         return $this;
     }
@@ -157,18 +137,20 @@ class ArticleListService
     /**
      * Sort articles based on their ratings and popularity.
      *
-     * @param string|null $sort
+     * @param array|null $sort
      *
      * @return object
      */
-    public function sortByPopularity(?string $sort): object
+    public function sortByPopularity(?array $sort): object
     {
-        $this->article = $this->article
-            ->join('article_ratings', 'articles.id', '=', 'article_ratings.article_id')
-            ->groupBy('article_ratings.article_id')
-            ->select([\DB::raw('SUM(article_ratings.score) / COUNT(article_ratings.id) as total_rates, COUNT(article_ratings.ip_address) as attendance_numbers'), 'articles.*'])
-            ->orderBy('total_rates', 'desc')
-            ->orderBy('attendance_numbers', 'desc');
+        if (isset($sort['type']) && $sort['type'] === self::SORT_BY_POPULARITY) {
+            $this->article = $this->article
+                ->join('article_ratings', 'articles.id', '=', 'article_ratings.article_id')
+                ->groupBy('article_ratings.article_id')
+                ->select([\DB::raw('AVG(article_ratings.score) as total_rates, COUNT(article_ratings.ip_address) as attendance_numbers'), 'articles.*'])
+                ->orderBy('total_rates', 'desc')
+                ->orderBy('attendance_numbers', 'desc');
+        }
 
         return $this;
     }
@@ -221,7 +203,8 @@ class ArticleListService
         $articles = $this->init()
             ->filterByCategories($request->categories)
             ->filterByCreationDate($request->date)
-            ->sort($request->sort)
+            ->sortByViews($request->sort, $request->view_date)
+            ->sortByPopularity($request->sort)
             ->searchByTitleOrBody($request->search)
             ->fetch($request->limit);
 
