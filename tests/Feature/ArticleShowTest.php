@@ -24,9 +24,9 @@ class ArticleShowTest extends TestCase
         $response = $this->get("/api/articles/$article->id");
 
         $response->assertStatus(Response::HTTP_OK)
-            ->assertSee('id')
-            ->assertSee('title')
-            ->assertSee('body');
+            ->assertJsonPath('data.id', $article->id)
+            ->assertJsonPath('data.title', $article->title)
+            ->assertJsonPath('data.body', $article->body);
     }
 
     /**

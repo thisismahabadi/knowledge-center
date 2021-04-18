@@ -6,6 +6,10 @@ use Tests\TestCase;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Response;
+use Database\Factories\ArticleFactory;
+use Database\Factories\CategoryFactory;
+use Database\Factories\ArticleViewFactory;
+use Database\Factories\ArticleRatingFactory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -14,39 +18,20 @@ class ArticlesListTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Article object id.
-     *
-     * @var int
-     */
-    public $article;
-
-    /**
-     * Test initial setup.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->article = Article::factory()->create();
-    }
-
-    /**
      * Test that articles list are correct.
      *
      * @return void
      */
     public function testArticlesList(): void
     {
-        Article::factory()->create();
+        $article = Article::factory()->create();
 
         $response = $this->get('/api/articles');
 
         $response->assertStatus(Response::HTTP_OK)
-            ->assertSee('id')
-            ->assertSee('title')
-            ->assertSee('body');
+            ->assertJsonPath('data.0.id', $article->id)
+            ->assertJsonPath('data.0.title', $article->title)
+            ->assertJsonPath('data.0.body', $article->body);
     }
 
     /**
@@ -56,11 +41,27 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListFilterByRightStructureCategories(): void
     {
-        $category = Category::factory()->create();
+        $category = CategoryFactory::new()
+            ->has(ArticleFactory::new())
+            ->create();
 
         $response = $this->get("/api/articles?categories[]=$category->id");
 
-        $response->assertStatus(Response::HTTP_OK);
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(1, 'data');
+    }
+
+    /**
+     * Test that articles list filter by categories are correct with no data.
+     *
+     * @return void
+     */
+    public function testArticlesListFilterByRightStructureCategoriesWithNoData(): void
+    {
+        $response = $this->get("/api/articles?categories[]=1");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(0, 'data');
     }
 
     /**
@@ -83,9 +84,27 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListFilterByRightStructureCreationDate(): void
     {
-        $response = $this->get('/api/articles?date[start]=2020-01-01');
+        Article::factory()->create();
 
-        $response->assertStatus(Response::HTTP_OK);
+        $today = date('Y-m-d');
+        $response = $this->get("/api/articles?date[start]=$today");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(1, 'data');
+    }
+
+    /**
+     * Test that articles list filter by creation date are correct with no data.
+     *
+     * @return void
+     */
+    public function testArticlesListFilterByRightStructureCreationDateWithNoData(): void
+    {
+        $today = date('Y-m-d');
+        $response = $this->get("/api/articles?date[start]=$today");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(0, 'data');
     }
 
     /**
@@ -108,9 +127,21 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListSortByRightStructureView(): void
     {
+        $articleWithNoView = ArticleFactory::new()
+            ->create();
+
+        $articleWithTwoViews = ArticleFactory::new()
+            ->has(
+                ArticleViewFactory::new()
+                    ->count(2)
+            )
+            ->create();
+
         $response = $this->get('/api/articles?sort[type]=view');
 
-        $response->assertStatus(Response::HTTP_OK);
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.0.id', $articleWithTwoViews->id)
+            ->assertJsonPath('data.1.id', $articleWithNoView->id);
     }
 
     /**
@@ -133,9 +164,48 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListSortByRightStructureViewWithCorrectViewDate(): void
     {
-        $response = $this->get('/api/articles?sort=view&sort[view_date]=2020-01-01');
+        $yesterdayArticleWithAView = ArticleFactory::new()
+            ->has(
+                ArticleViewFactory::new(
+                    ['created_at' => date('Y-m-d', strtotime('-1 days'))]
+                )
+            )
+            ->create();
 
-        $response->assertStatus(Response::HTTP_OK);
+        $todayArticlesWithAView = ArticleFactory::new()
+            ->has(
+                ArticleViewFactory::new()
+            )
+            ->create();
+
+        $today = date('Y-m-d');
+        $response = $this->get("/api/articles?sort[type]=view&sort[view_date]=$today");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $todayArticlesWithAView->id);
+    }
+
+    /**
+     * Test that articles list sort by views are correct with correct view date with no data.
+     *
+     * @return void
+     */
+    public function testArticlesListSortByRightStructureViewWithCorrectViewDateWithNoData(): void
+    {
+        ArticleFactory::new()
+            ->has(
+                ArticleViewFactory::new(
+                    ['created_at' => date('Y-m-d', strtotime('-1 days'))]
+                )
+            )
+            ->create();
+
+        $today = date('Y-m-d');
+        $response = $this->get("/api/articles?sort[type]=view&sort[view_date]=$today");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(0, 'data');
     }
 
     /**
@@ -145,9 +215,25 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListPopularityByRightStructureView(): void
     {
+        $articlesWithFiveScoreAndRatedThreeTime = ArticleFactory::new()
+            ->has(
+                ArticleRatingFactory::new(['score' => 5])
+                    ->count(3)
+            )
+            ->create();
+
+        $articlesWithFiveScoreAndRatedFiveTime = ArticleFactory::new()
+            ->has(
+                ArticleRatingFactory::new(['score' => 5])
+                    ->count(5)
+            )
+            ->create();
+
         $response = $this->get('/api/articles?sort[type]=popularity');
 
-        $response->assertStatus(Response::HTTP_OK);
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.0.id', $articlesWithFiveScoreAndRatedFiveTime->id)
+            ->assertJsonPath('data.1.id', $articlesWithFiveScoreAndRatedThreeTime->id);
     }
 
     /**
@@ -157,9 +243,12 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListLimitByRightStructure(): void
     {
-        $response = $this->get('/api/articles?limit=10');
+        Article::factory(5)->create();
 
-        $response->assertStatus(Response::HTTP_OK);
+        $response = $this->get('/api/articles?limit=5');
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(5, 'data');
     }
 
     /**
@@ -182,9 +271,16 @@ class ArticlesListTest extends TestCase
      */
     public function testArticlesListSearchByRightStructure(): void
     {
-        $response = $this->get('/api/articles?search=A');
+        $articles = Article::factory(2)->create();
+        $title = $articles[0]->title;
 
-        $response->assertStatus(Response::HTTP_OK);
+        $response = $this->get("/api/articles?search=$title");
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $articles[0]->id)
+            ->assertJsonPath('data.0.title', $articles[0]->title)
+            ->assertJsonPath('data.0.body', $articles[0]->body);
     }
 
     /**

@@ -44,7 +44,12 @@ class ArticleStoreTest extends TestCase
                 'body' => $this->article->body,
             ]);
 
-        $response->assertStatus(Response::HTTP_CREATED);
+        $articleId = json_decode($response->getContent())->data->id;
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonPath('data.id', $articleId)
+            ->assertJsonPath('data.title', $this->article->title)
+            ->assertJsonPath('data.body', $this->article->body);
     }
 
     /**
@@ -62,7 +67,13 @@ class ArticleStoreTest extends TestCase
                 'categories' => [$category->id],
             ]);
 
-        $response->assertStatus(Response::HTTP_CREATED);
+        $articleId = json_decode($response->getContent())->data->id;
+
+        $response->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonPath('data.id', $articleId)
+            ->assertJsonPath('data.title', $this->article->title)
+            ->assertJsonPath('data.body', $this->article->body)
+            ->assertJsonPath('data.categories.0.id', $category->id);
     }
 
     /**

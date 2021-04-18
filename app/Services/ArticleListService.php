@@ -169,7 +169,7 @@ class ArticleListService
 
             $this->article = $this->article
                 ->where('articles.title', 'LIKE', $search)
-                ->where('articles.body', 'LIKE', $search);
+                ->orWhere('articles.body', 'LIKE', $search);
         }
 
         return $this;
