@@ -218,14 +218,14 @@ class ArticlesListTest extends TestCase
         $articlesWithFiveScoreAndRatedThreeTime = ArticleFactory::new()
             ->has(
                 ArticleRatingFactory::new(['score' => 5])
-                    ->count(3)
+                    ->count(1)
             )
             ->create();
 
         $articlesWithFiveScoreAndRatedFiveTime = ArticleFactory::new()
             ->has(
                 ArticleRatingFactory::new(['score' => 5])
-                    ->count(5)
+                    ->count(4)
             )
             ->create();
 
@@ -272,15 +272,15 @@ class ArticlesListTest extends TestCase
     public function testArticlesListSearchByRightStructure(): void
     {
         $articles = Article::factory(2)->create();
-        $title = $articles[0]->title;
+        $title = $articles[1]->title;
 
         $response = $this->get("/api/articles?search=$title");
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.id', $articles[0]->id)
-            ->assertJsonPath('data.0.title', $articles[0]->title)
-            ->assertJsonPath('data.0.body', $articles[0]->body);
+            ->assertJsonPath('data.0.id', $articles[1]->id)
+            ->assertJsonPath('data.0.title', $articles[1]->title)
+            ->assertJsonPath('data.0.body', $articles[1]->body);
     }
 
     /**

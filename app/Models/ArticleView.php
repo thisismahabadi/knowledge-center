@@ -13,6 +13,16 @@ class ArticleView extends Model
     use SoftDeletes, HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'article_id',
+        'ip_address',
+    ];
+
+    /**
      * Boot method will run before any model event.
      *
      * @return void
@@ -25,16 +35,6 @@ class ArticleView extends Model
             dispatch(new ArticleViewJob($article));
         });
     }
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'article_id',
-        'ip_address',
-    ];
 
     /**
      * Get the article related to the view.

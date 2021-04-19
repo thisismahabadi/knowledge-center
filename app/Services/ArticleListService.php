@@ -145,11 +145,7 @@ class ArticleListService
     {
         if (isset($sort['type']) && $sort['type'] === self::SORT_BY_POPULARITY) {
             $this->article = $this->article
-                ->join('article_ratings', 'articles.id', '=', 'article_ratings.article_id')
-                ->groupBy('article_ratings.article_id')
-                ->select([\DB::raw('AVG(article_ratings.score) as total_rates, COUNT(article_ratings.ip_address) as attendance_numbers'), 'articles.*'])
-                ->orderBy('total_rates', 'desc')
-                ->orderBy('attendance_numbers', 'desc');
+                ->orderBy('articles.rating', 'desc');
         }
 
         return $this;

@@ -24,14 +24,14 @@ class ArticlePopularitySortTest extends TestCase
         $firstArticle = ArticleFactory::new()
             ->has(
                 ArticleRatingFactory::new(['score' => 5])
-                    ->count(3)
+                    ->count(1)
             )
             ->create();
 
         $secondArticle = ArticleFactory::new()
             ->has(
                 ArticleRatingFactory::new(['score' => 5])
-                    ->count(5)
+                    ->count(4)
             )
             ->create();
     }
