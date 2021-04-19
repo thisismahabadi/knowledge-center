@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\ArticleRatingRequest;
 use App\Http\Resources\RateResource;
-use App\Services\ArticleRateService;
+use App\Services\ArticleRatingService;
+use App\Http\Requests\ArticleRatingRequest;
 
 class RatingController extends Controller
 {
@@ -14,13 +14,13 @@ class RatingController extends Controller
      *
      * @param int $articleId
      * @param \App\Http\Requests\ArticleRatingRequest $request
-     * @param \App\Services\ArticleRateService $service
+     * @param \App\Services\ArticleRatingService $service
      *
-     * @see \App\Services\ArticleRateService::rate(int $articleId, object $request)
+     * @see \App\Services\ArticleRatingService::rate(int $articleId, object $request)
      *
      * @return object
      */
-    public function rate(int $articleId, ArticleRatingRequest $request, ArticleRateService $service): object
+    public function rate(int $articleId, ArticleRatingRequest $request, ArticleRatingService $service): object
     {
         $request->merge(['ip_address' => \Request::ip()]);
 

@@ -22,6 +22,7 @@ class Article extends Model
         'title',
         'body',
         'view_count',
+        'rating',
     ];
 
     /**

@@ -6,7 +6,7 @@ use App\Models\Article;
 use App\Models\ArticleRating;
 use App\Exceptions\RatingException;
 
-class ArticleRateService
+class ArticleRatingService
 {
     /**
      * The rate limit per day.
@@ -83,5 +83,25 @@ class ArticleRateService
                     'ip_address' => $request->ip_address,
                     'score' => $request->score,
                 ]);
+    }
+
+    /**
+     * Update rating of an article.
+     *
+     * @param Article $article
+     *
+     * @return float
+     */
+    public function calculateWeightedRating(Article $article): float
+    {
+        $scores = $article->articleRating()
+            ->select(['score', \DB::raw('COUNT(*) as count')])
+            ->groupBy('score')
+            ->pluck('count', 'score');
+
+        return $scores->map(
+                        fn (int $count, int $score): int => $count * $score
+                    )
+                    ->sum() / 100;
     }
 }

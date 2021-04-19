@@ -18,6 +18,7 @@ class CreateArticlesTable extends Migration
             $table->string('title');
             $table->text('body');
             $table->integer('view_count')->default(0);
+            $table->double('rating')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
