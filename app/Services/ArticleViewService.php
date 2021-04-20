@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Article;
 use App\Repositories\ArticleViewRepository;
 
 class ArticleViewService
@@ -33,16 +32,7 @@ class ArticleViewService
      */
     public function showArticleAndRegisterArticleView(int $articleId): object
     {
-        $article = Article::with('categories:id,title')
-            ->findOrFail($articleId);
-
-        if (! $this->repositories->hasViewed($articleId, \Request::ip())) {
-            $article->articleView()
-                ->create([
-                    'ip_address' => \Request::ip(),
-                ]);
-        }
-
-        return $article;
+        return $this->repositories
+            ->showArticleAndRegisterArticleView($articleId);
     }
 }

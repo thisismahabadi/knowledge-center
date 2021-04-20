@@ -2,11 +2,27 @@
 
 namespace App\Services;
 
-use App\Models\Article;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\ArticleStoreRepository;
 
 class ArticleStoreService
 {
+    /**
+     * The repository data object.
+     *
+     * @var object
+     */
+    public $repositories;
+
+    /**
+     * This will inject dependencies required by article store service.
+     *
+     * @param \App\Repositories\ArticleStoreRepository $repository
+     */
+    public function __construct(ArticleStoreRepository $repository)
+    {
+        $this->repositories = $repository;
+    }
+
     /**
      * Create a new article.
      *
@@ -16,19 +32,7 @@ class ArticleStoreService
      */
     public function storeArticleAndAttachCategories(object $request): object
     {
-        try {
-            DB::beginTransaction();
-
-            $article = Article::create($request->all());
-
-            $article->categories()
-                ->attach($request->categories);
-
-            DB::commit();
-
-            return $article;
-        } catch (\Exception $e) {
-            DB::rollBack();
-        }
+        return $this->repositories
+            ->storeArticleAndAttachCategories($request);
     }
 }

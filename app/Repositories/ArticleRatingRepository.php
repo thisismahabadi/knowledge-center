@@ -60,4 +60,28 @@ class ArticleRatingRepository
         return false;
     }
 
+    /**
+     * Rate an article.
+     *
+     * @param object $request
+     *
+     * @return object
+     */
+    public function rateArticle(object $request): object
+    {
+        $article = Article::findOrFail($request->article_id);
+
+        $hasRated = $this->hasRated($article, $request->ip());
+
+        if (! $hasRated) {
+            $this->isDailyLimitRemained($request->ip());
+        }
+
+        return $article->articleRating()
+            ->create([
+                    'ip_address' => $request->ip(),
+                    'score' => $request->score,
+                ]);
+    }
+
 }
