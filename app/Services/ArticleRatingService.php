@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Article;
 use App\Repositories\ArticleRatingRepository;
 
 class ArticleRatingService
