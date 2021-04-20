@@ -121,11 +121,12 @@ Also note that the articles with zero views will not be listed when you try to g
 # Todo
 
 - [x] Make controller and model methods lighter.
-- [ ] Make services lighter.
+- [x] Make services lighter.
+- [x] Implement fuzzy search.
+- [ ] Make repositories lighter.
 - [ ] Implement full unit tests.
 - [ ] Improve feature tests.
 - [ ] Improve query performances.
 - [ ] Imrpove error handling.
 - [ ] Dockerizing.
 - [ ] Implement Horizon package.
-- [ ] Implement fuzzy search.
