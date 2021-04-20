@@ -55,7 +55,8 @@ class ArticleRatingTest extends TestCase
 
         $articleId = json_decode($article->getContent())->data->id;
 
-        $response = $this->postJson("/api/articles/$articleId/rate", [
+        $response = $this->postJson('/api/ratings', [
+                'article_id' => $articleId,
                 'score' => 5,
             ]);
 
@@ -74,12 +75,14 @@ class ArticleRatingTest extends TestCase
      */
     public function testRateArticleMultipleTimes(): void
     {
-        $this->postJson("/api/articles/$this->article/rate", [
+        $this->postJson('/api/ratings', [
+            'article_id' => $this->article,
             'score' => 5,
         ]);
 
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson("/api/articles/$this->article/rate", [
+            ->postJson("/api/ratings", [
+                'article_id' => $this->article,
                 'score' => 5,
             ]);
 
@@ -97,7 +100,7 @@ class ArticleRatingTest extends TestCase
     public function testRateArticleWithoutRequiredFields(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->post("/api/articles/$this->article/rate");
+            ->postJson("/api/ratings");
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
@@ -110,7 +113,8 @@ class ArticleRatingTest extends TestCase
     public function testRateArticleWithFalseScore(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson("/api/articles/$this->article/rate", [
+            ->postJson("/api/ratings", [
+                'article_id' => $this->article,
                 'score' => 3.5,
             ]);
 
@@ -125,11 +129,12 @@ class ArticleRatingTest extends TestCase
     public function testRateUnknownArticle(): void
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->postJson('/api/articles/111111111/rate', [
+            ->postJson('/api/ratings', [
+                'article_id' => 11111111111,
                 'score' => 1,
             ]);
 
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -146,14 +151,16 @@ class ArticleRatingTest extends TestCase
 
             $articles[] = $article->id;
 
-            $this->postJson("/api/articles/$article->id/rate", [
+            $this->postJson("/api/ratings", [
+                'article_id' => $article->id,
                 'score' => 3,
             ]);
         }
 
         $article = Article::factory()->create();
 
-        $response = $this->postJson("/api/articles/$article->id/rate", [
+        $response = $this->postJson("/api/ratings", [
+            'article_id' => $article->id,
             'score' => 2,
         ]);
 

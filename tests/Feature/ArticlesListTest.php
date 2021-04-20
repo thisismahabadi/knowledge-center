@@ -265,25 +265,6 @@ class ArticlesListTest extends TestCase
     }
 
     /**
-     * Test that articles list search are correct.
-     *
-     * @return void
-     */
-    public function testArticlesListSearchByRightStructure(): void
-    {
-        $articles = Article::factory(2)->create();
-        $title = $articles[1]->title;
-
-        $response = $this->get("/api/articles?search=$title");
-
-        $response->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.id', $articles[1]->id)
-            ->assertJsonPath('data.0.title', $articles[1]->title)
-            ->assertJsonPath('data.0.body', $articles[1]->body);
-    }
-
-    /**
      * Test that articles list search are not correct if search send without string structure.
      *
      * @return void

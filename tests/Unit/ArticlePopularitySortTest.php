@@ -3,8 +3,9 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Services\ArticleListService;
+use App\Models\Article;
 use Database\Factories\ArticleFactory;
+use App\Repositories\ArticleListRepository;
 use Database\Factories\ArticleRatingFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -46,8 +47,8 @@ class ArticlePopularitySortTest extends TestCase
      */
     public function testWeightedRanking()
     {
-    	$articles = (new ArticleListService)->init()
-	    	->sortByPopularity(['type' => 'popularity'])
+    	$articles = (new ArticleListRepository)->init(new Article)
+            ->sortByPopularity(['type' => 'popularity'])
 	    	->fetch();
 
         $this->assertGreaterThan($articles[1]->id, $articles[0]->id);

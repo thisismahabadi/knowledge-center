@@ -5,10 +5,10 @@ namespace App\Jobs;
 use App\Models\Article;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
-use App\Services\ArticleRatingService;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Services\ArticleWeightedRatingService;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class ArticleRatingJob implements ShouldQueue
@@ -37,11 +37,11 @@ class ArticleRatingJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ArticleRatingService $service)
+    public function handle(ArticleWeightedRatingService $service)
     {
         $this->article
             ->update([
-                'rating' => $service->calculateWeightedRating($this->article),
+                'rating' => $service->calculate($this->article),
             ]);
     }
 }

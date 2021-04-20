@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ArticleRatingRequest extends FormRequest
@@ -24,6 +25,7 @@ class ArticleRatingRequest extends FormRequest
     public function rules()
     {
         return [
+            'article_id' => Rule::exists('articles', 'id'),
             'score' => 'required|integer|between:1,5',
         ];
     }

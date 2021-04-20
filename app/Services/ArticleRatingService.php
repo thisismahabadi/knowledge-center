@@ -3,105 +3,48 @@
 namespace App\Services;
 
 use App\Models\Article;
-use App\Models\ArticleRating;
-use App\Exceptions\RatingException;
+use App\Repositories\ArticleRatingRepository;
 
 class ArticleRatingService
 {
     /**
-     * The rate limit per day.
+     * The repository data object.
      *
-     * @var int
+     * @var object
      */
-    CONST RATE_LIMIT_PER_DAY = 10;
+    public $repositories;
 
     /**
-     * Check if an user is eligible to rate today or not.
+     * This will inject dependencies required by article rating service.
      *
-     * @param $ipAddress
-     *
-     * @throws \Exception\RatingException
-     *
-     * @return bool
+     * @param \App\Repositories\ArticleRatingRepository $repository
      */
-    public function isDailyLimitRemained($ipAddress): bool
+    public function __construct(ArticleRatingRepository $repository)
     {
-        $todayRates = ArticleRating::where('ip_address', $ipAddress)
-            ->whereDate('created_at', date('Y-m-d'))
-            ->count();
-
-        if ($todayRates >= self::RATE_LIMIT_PER_DAY) {
-            throw RatingException::dailyLimitExceeded(self::RATE_LIMIT_PER_DAY);
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if an user has rated to the specified article or not.
-     *
-     * @param int $articleId
-     * @param $ipAddress
-     *
-     * @throws \Exception\RatingException
-     *
-     * @return bool
-     */
-    public function hasRated(int $articleId, $ipAddress): bool
-    {
-        $rate = ArticleRating::where('ip_address', $ipAddress)
-            ->where('article_id', $articleId)
-            ->exists();
-
-        if ($rate) {
-            throw RatingException::hasRated();
-        }
-
-        return false;
+        $this->repositories = $repository;
     }
 
     /**
      * Rate an article.
      *
-     * @param int $articleId
      * @param object $request
      *
      * @return object
      */
-    public function rate(int $articleId, object $request): object
+    public function rateArticle(object $request): object
     {
-        $article = Article::findOrFail($articleId);
+        $article = Article::findOrFail($request->article_id);
 
-        $hasRated = $this->hasRated($articleId, $request->ip_address);
+        $hasRated = $this->repositories->hasRated($article, $request->ip());
 
         if (! $hasRated) {
-            $this->isDailyLimitRemained($request->ip_address);
+            $this->repositories->isDailyLimitRemained($request->ip());
         }
 
         return $article->articleRating()
             ->create([
-                    'ip_address' => $request->ip_address,
+                    'ip_address' => $request->ip(),
                     'score' => $request->score,
                 ]);
-    }
-
-    /**
-     * Update rating of an article.
-     *
-     * @param Article $article
-     *
-     * @return float
-     */
-    public function calculateWeightedRating(Article $article): float
-    {
-        $scores = $article->articleRating()
-            ->select(['score', \DB::raw('COUNT(*) as count')])
-            ->groupBy('score')
-            ->pluck('count', 'score');
-
-        return $scores->map(
-                        fn (int $count, int $score): int => $count * $score
-                    )
-                    ->sum() / 100;
     }
 }

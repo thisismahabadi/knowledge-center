@@ -27,7 +27,7 @@ class ArticlesListRequest extends FormRequest
             'categories' => 'array',
             'date' => 'array',
             'sort' => 'array',
-            'limit' => 'integer',
+            'limit' => 'integer|max:100',
             'search' => 'string',
         ];
     }

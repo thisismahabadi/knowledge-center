@@ -18,13 +18,13 @@ class ArticleController extends Controller
      * @param \App\Http\Requests\ArticleStoreRequest $request
      * @param \App\Services\ArticleStoreService $service
      *
-     * @see \App\Services\ArticleStoreService::create(object $request)
+     * @see \App\Services\ArticleStoreService::storeArticleAndAttachCategories(object $request)
      *
      * @return object
      */
-    public function create(ArticleStoreRequest $request, ArticleStoreService $service): object
+    public function store(ArticleStoreRequest $request, ArticleStoreService $service): object
     {
-        $article = $service->create($request);
+        $article = $service->storeArticleAndAttachCategories($request);
 
         return new ArticleResource($article);
     }
@@ -39,7 +39,7 @@ class ArticleController extends Controller
      *
      * @return object
      */
-    public function get(ArticlesListRequest $request, ArticleListService $service): object
+    public function index(ArticlesListRequest $request, ArticleListService $service): object
     {
         $articles = $service->get($request);
 
@@ -52,13 +52,13 @@ class ArticleController extends Controller
      * @param int $articleId
      * @param \App\Services\ArticleViewService $service
      *
-     * @see \App\Services\ArticleViewService::show(int $articleId)
+     * @see \App\Services\ArticleViewService::showArticleAndRegisterArticleView(int $articleId)
      *
      * @return object
      */
     public function show(int $articleId, ArticleViewService $service): object
     {
-        $article = $service->show($articleId);
+        $article = $service->showArticleAndRegisterArticleView($articleId);
 
         return new ArticleResource($article);
     }
