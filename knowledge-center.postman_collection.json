@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "knowledge-center",
-		"_postman_id": "78ba2da5-03b2-7a62-5b4c-4af8f0d3e732",
+		"_postman_id": "e8e1fbc0-48cf-c8df-c966-fe4c105d92a9",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -93,7 +93,7 @@
 		{
 			"name": "Rate an article",
 			"request": {
-				"url": "http://localhost:8000/api/articles/1/rate",
+				"url": "http://localhost:8000/api/ratings",
 				"method": "POST",
 				"header": [
 					{
@@ -109,14 +109,20 @@
 							"key": "score",
 							"value": "0",
 							"description": "Error will occur, Score should be 1 to 5, Also an user can rate to an article once and maximum 10 articles a day",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "score",
 							"value": "5",
 							"description": "",
-							"type": "text",
-							"disabled": true
+							"type": "text"
+						},
+						{
+							"key": "article_id",
+							"value": "1",
+							"description": "",
+							"type": "text"
 						}
 					]
 				},
@@ -182,7 +188,10 @@
 						"description": ""
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": "A show (GET with article id) will register a view (by IP address)"
 			},
 			"response": []

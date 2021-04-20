@@ -33,7 +33,7 @@ class ArticleListService
      */
     public function get(object $request): object
     {
-        $articles = $this->repositories
+        return $this->repositories
             ->init(new Article)
             ->filterByCategories($request->categories)
             ->filterByCreationDate($request->date)
@@ -41,7 +41,5 @@ class ArticleListService
             ->sortByPopularity($request->sort)
             ->searchByTitleOrBody($request->search)
             ->fetch($request->limit);
-
-        return $articles;
     }
 }

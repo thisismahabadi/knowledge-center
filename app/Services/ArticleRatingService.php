@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Article;
 use App\Repositories\ArticleRatingRepository;
 
 class ArticleRatingService
@@ -33,18 +32,7 @@ class ArticleRatingService
      */
     public function rateArticle(object $request): object
     {
-        $article = Article::findOrFail($request->article_id);
-
-        $hasRated = $this->repositories->hasRated($article, $request->ip());
-
-        if (! $hasRated) {
-            $this->repositories->isDailyLimitRemained($request->ip());
-        }
-
-        return $article->articleRating()
-            ->create([
-                    'ip_address' => $request->ip(),
-                    'score' => $request->score,
-                ]);
+        return $this->repositories
+            ->rateArticle($request);
     }
 }

@@ -15,7 +15,7 @@ class ArticleWeightedRatingService
     public $repositories;
 
     /**
-     * This will inject dependencies required by article rating service.
+     * This will inject dependencies required by article weighted rating service.
      *
      * @param \App\Repositories\ArticleWeightedRatingRepository $repository
      */

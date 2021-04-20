@@ -2,10 +2,27 @@
 
 namespace App\Services;
 
-use App\Jobs\DatabaseSeedJob;
+use App\Repositories\HomeRepository;
 
 class HomeService
 {
+    /**
+     * The repository data object.
+     *
+     * @var object
+     */
+    public $repositories;
+
+    /**
+     * This will inject dependencies required by home repository.
+     *
+     * @param \App\Repositories\HomeRepository $repository
+     */
+    public function __construct(HomeRepository $repository)
+    {
+        $this->repositories = $repository;
+    }
+
     /**
      * Check if an ip address has viewed an article.
      *
@@ -13,8 +30,7 @@ class HomeService
      */
     public function index(): array
     {
-        DatabaseSeedJob::dispatch();
-
-        return ['message' => 'Welcome to home page of knowledge center.'];
+        return $this->repositories
+            ->index();
     }
 }
