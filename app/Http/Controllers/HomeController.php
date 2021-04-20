@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Jobs\DatabaseSeedJob;
+use App\Services\HomeService;
 use App\Http\Resources\HomeResource;
 
 class HomeController extends Controller
@@ -11,14 +11,16 @@ class HomeController extends Controller
     /**
      * Default message to show home page.
      *
+     * @param \App\Services\HomeService $service
+     *
+     * @see \App\Services\HomeService::index()
+     *
      * @return object
      */
-    public function index(): object
+    public function index(HomeService $service): object
     {
-		DatabaseSeedJob::dispatch();
+        $data = $service->index();
 
-		$response = ['message' => 'Welcome to home page of knowledge center.'];
-
-        return new HomeResource($response);
+        return new HomeResource($data);
     }
 }

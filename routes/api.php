@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'articles', 'middleware' => 'throttle:10000000'], function () {
-	Route::post('/{articleId}/rate', 'RatingController@rate');
-	Route::post('/', 'ArticleController@create');
-	Route::get('/', 'ArticleController@get');
-	Route::get('/{articleId}', 'ArticleController@show');
-});
+Route::apiResource('articles', ArticleController::class)
+	->middleware('throttle:10000000')
+    ->only(['index', 'store', 'show']);
+
+Route::apiResource('ratings', RatingController::class)
+	->middleware('throttle:10000000')
+    ->only(['store']);

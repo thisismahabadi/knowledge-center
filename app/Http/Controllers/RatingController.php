@@ -12,19 +12,16 @@ class RatingController extends Controller
     /**
      * Rate an article.
      *
-     * @param int $articleId
      * @param \App\Http\Requests\ArticleRatingRequest $request
      * @param \App\Services\ArticleRatingService $service
      *
-     * @see \App\Services\ArticleRatingService::rate(int $articleId, object $request)
+     * @see \App\Services\ArticleRatingService::rateArticle(int $articleId, object $request)
      *
      * @return object
      */
-    public function rate(int $articleId, ArticleRatingRequest $request, ArticleRatingService $service): object
+    public function store(ArticleRatingRequest $request, ArticleRatingService $service): object
     {
-        $request->merge(['ip_address' => \Request::ip()]);
-
-        $rate = $service->rate($articleId, $request);
+        $rate = $service->rateArticle($request);
 
         return new RateResource($rate);
     }

@@ -109,8 +109,9 @@ Also note that the articles with zero views will not be listed when you try to g
 
 - Rate an article - [POST]
 
-    ``{{url}}/articles/{articleId}/rate``
+    ``{{url}}/ratings``
 
+        'article_id' => 'integer'
         'score' => 'required|integer|between:1,5'
 
 - Show detail of an specific article - [GET]

@@ -14,7 +14,7 @@ class ArticleStoreService
      *
      * @return object
      */
-    public function create(object $request): object
+    public function storeArticleAndAttachCategories(object $request): object
     {
         try {
             DB::beginTransaction();

@@ -3,25 +3,25 @@
 namespace App\Services;
 
 use App\Models\Article;
-use App\Models\ArticleView;
+use App\Repositories\ArticleViewRepository;
 
 class ArticleViewService
 {
     /**
-     * Check if an ip address has viewed an article.
+     * The repository data object.
      *
-     * @param int $articleId
-     * @param $ipAddress
-     *
-     * @return int
+     * @var object
      */
-    public function hasViewed(int $articleId, $ipAddress): int
-    {
-        $view = ArticleView::where('article_id', $articleId)
-            ->where('ip_address', $ipAddress)
-            ->count();
+    public $repositories;
 
-        return $view;
+    /**
+     * This will inject dependencies required by article view service.
+     *
+     * @param \App\Repositories\ArticleViewRepository $repository
+     */
+    public function __construct(ArticleViewRepository $repository)
+    {
+        $this->repositories = $repository;
     }
 
     /**
@@ -31,11 +31,12 @@ class ArticleViewService
      *
      * @return object
      */
-    public function show(int $articleId): object
+    public function showArticleAndRegisterArticleView(int $articleId): object
     {
-        $article = Article::findOrFail($articleId);
+        $article = Article::with('categories:id,title')
+            ->findOrFail($articleId);
 
-        if (! $this->hasViewed($articleId, \Request::ip())) {
+        if (! $this->repositories->hasViewed($articleId, \Request::ip())) {
             $article->articleView()
                 ->create([
                     'ip_address' => \Request::ip(),
