@@ -37,15 +37,15 @@ class ArticleListRepository
     /**
      * Initiate a new object if nothing passed.
      *
-     * @param \App\Models\Article $article
-     *
-     * @return object
+     * @param null|\App\Models\Article $article
      */
-    public function init(Article $article): object
+    public function __construct(Article $article = null)
     {
-        $this->article = $article->with('categories:id,title');
+        if ($article) {
+            $this->article = $article->with('categories:id,title');
+        }
 
-        return $this;
+        $this->article = (new Article)->with('categories:id,title');
     }
 
     /**
