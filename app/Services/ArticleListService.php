@@ -34,7 +34,6 @@ class ArticleListService
     public function get(object $request): object
     {
         return $this->repositories
-            ->init(new Article)
             ->filterByCategories($request->categories)
             ->filterByCreationDate($request->date)
             ->sortByViews($request->sort, $request->view_date)
